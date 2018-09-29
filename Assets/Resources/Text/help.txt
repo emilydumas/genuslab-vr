@@ -1,4 +1,4 @@
-GenusView (v0.4 alpha) by David Dumas
+GenusLab VR
 
 Arrows/WASD = Walk around
 Space = Toggle mode WALK/DRAW

@@ -1,14 +1,14 @@
-# genusview
+# GenusLab VR
 
 ![screenshot](images/screenshot-small.png)
 
-A utility for drawing on a genus two surface and its universal cover, which updates both pictures in real time.  This is meant to be used to understand the universal covering of a hyperbolic surface.  Developed in [Unity 3D](http://unity3d.com/unity).
+A VR experience for Oculus Rift + Touch to explore drawing on a genus two surface and its universal cover, which updates both pictures in real time.  This is meant to be used to understand the universal covering of a hyperbolic surface.  Developed in [Unity 3D](http://unity3d.com/unity).
 
 ## Status
 
 Alpha quality; see [the list of known issues](KNOWN_ISSUES.md).
 
-This program was developed as a prototype for a Fall 2018 project in the [Mathematical Computing Laboratory](http://mcl.math.uic.edu/) at UIC in which undergraduate students will seek to develop a VR port, and to refine the program and add additional features.
+This is a Fall 2018 project in the [Mathematical Computing Laboratory](http://mcl.math.uic.edu/) at UIC.
 
 ## Documentation
 
@@ -28,4 +28,7 @@ Keybindings are described in the in-application help screen, which is accessed b
 
 ## Developers
 
+* Alexander Adrahtas
 * David Dumas (<david@dumas.io>)
+* Alexander Guo
+* Gregory Schamberger

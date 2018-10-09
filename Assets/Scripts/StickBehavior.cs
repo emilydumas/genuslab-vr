@@ -17,6 +17,7 @@ public class StickBehavior : MonoBehaviour {
 	private bool isDrawing = false;
 	private bool isVisible = true;
 	private bool drill = false; // not supported yet
+	private bool burn = true; //set true for testing
 	private PaintableTexture pt;
 	private LayerMask layerMask = Physics.DefaultRaycastLayers;
 	
@@ -51,6 +52,10 @@ public class StickBehavior : MonoBehaviour {
 	{
 		drill = d;
 	}
+	public void setBurnThrough(bool b)
+	{
+		burn = b;
+	}
 
 	// Make GameObject and its children visible or invisible.
 	public void setVisibility(bool b)
@@ -74,7 +79,9 @@ public class StickBehavior : MonoBehaviour {
 		if (isDrawing) {
 			if (drill) {
 				PaintAllHits();
-			} else {
+			} else if (burn){
+				PaintBurnHits();
+			}else {
 				PaintFirstHit();
 			}
 		}
@@ -83,6 +90,28 @@ public class StickBehavior : MonoBehaviour {
 	void PaintAllHits() {
 		Debug.Log("PAINTING ALL HITS NOT IMPLEMENTED.");
 		PaintFirstHit();
+	}
+
+	void PaintBurnHits() {
+		var raydir = transform.TransformDirection(Vector3.up);
+        RaycastHit hit;
+
+		// Cast a ray in direction "up", deteremine what paintable is first hit.
+        if (Physics.Raycast (transform.position, raydir, out hit, maxDist, layerMask)) {
+			GameObject g = hit.transform.gameObject;
+
+            if (pt != null) {
+				// Paint on the shared PaintableTexture at the (u,v) coordinates
+				// of the point where the ray met the object.
+				//pt.PaintUVBurn (g, hit.textureCoord);
+				var currPos = transform.position;
+				while(hit.point != null){
+					var incrementRayCast = Physics.Raycast (currPos+=Vector3.forward, raydir, out hit, maxDist, layerMask);
+					Debug.Log("Painting (u,v): " + hit.textureCoord + " at " + hit.point);
+
+				}
+			}
+		}
 	}
 
     void PaintFirstHit() {

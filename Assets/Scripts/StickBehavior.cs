@@ -109,7 +109,7 @@ public class StickBehavior : MonoBehaviour {
 
             if (pt != null) {
 				pt.PaintUV(g, hit.textureCoord);
-				Vector3 hitReverseOrigin = new Vector3(transform.position.x, transform.position.y, (transform.position.z + 1) * -1); 
+				Vector3 hitReverseOrigin = new Vector3(transform.position.x, transform.position.y, (transform.position.z ) * -1); 
 				Debug.Log("original origin: " +  transform.position + "reverse origin: " + hitReverseOrigin);
 				Physics.Raycast(hitReverseOrigin, reverseRayDir, out hitReverse, maxDist, layerMask);
 				Debug.Log("original point: " + transform.position + "reversehit origin point" + hitReverseOrigin);

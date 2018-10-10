@@ -13,6 +13,7 @@ using UnityEngine;
 
 public class StickBehavior : MonoBehaviour {
 	public float maxDist = Mathf.Infinity;
+	private float maxForward = 10.0f;
 	private Renderer[] rends;
 	private bool isDrawing = false;
 	private bool isVisible = true;
@@ -27,6 +28,8 @@ public class StickBehavior : MonoBehaviour {
         pt = PaintableTexture.Instance;
 		// Paintable objects must all live in a layer called "Paintable"
 		layerMask = (1 << LayerMask.NameToLayer("Paintable"));
+		if (maxDist < maxForward)
+			maxForward = maxDist;
 		makeInvisible();
 	}
 
@@ -93,28 +96,26 @@ public class StickBehavior : MonoBehaviour {
 	}
 
 	void PaintBurnHits() {
-		//var raydir = transform.TransformDirection(Vector3.up);
+		// Currently only paints two hits: Frontmost and backmost
+
         var raydir = transform.TransformDirection(Vector3.up);
 		RaycastHit hit;
-		//Debug.Log(raydir);
-		var reverseRayDir = new Vector3(raydir.x, raydir.y, -1 * raydir.z);
-		//Debug.Log(reverseRayDir);
-		RaycastHit hitReverse;
 
-		Debug.Log("raydir: "+ raydir + "reverse raydir: " + reverseRayDir);
-
-		// Cast a ray in direction "up", deteremine what paintable is first hit.
+		// Cast a ray in direction "up", determine what paintable is first hit.
+		// This is the forward ray.  It starts at the position of the stick.
         if (Physics.Raycast (transform.position, raydir, out hit, maxDist, layerMask)) {
 			GameObject g = hit.transform.gameObject;
-
             if (pt != null) {
 				pt.PaintUV(g, hit.textureCoord);
-				Vector3 hitReverseOrigin = new Vector3(transform.position.x, transform.position.y, (transform.position.z + 1) * -1); 
-				Debug.Log("original origin: " +  transform.position + "reverse origin: " + hitReverseOrigin);
-				Physics.Raycast(hitReverseOrigin, reverseRayDir, out hitReverse, maxDist, layerMask);
-				Debug.Log("original point: " + transform.position + "reversehit origin point" + hitReverseOrigin);
-				pt.PaintUV(g, hitReverse.textureCoord);
-				
+			}
+		}
+
+		// Now, the backward ray.  It starts at (stick position) + maxDist*(forward ray direction).
+		if (Physics.Raycast(transform.position + maxForward*raydir, -raydir, out hit, maxDist, layerMask)) {
+			Debug.Log("Backward raycast found a hit");
+			GameObject g = hit.transform.gameObject;
+			if (pt != null) {
+				pt.PaintUV(g, hit.textureCoord);
 			}
 		}
 	}

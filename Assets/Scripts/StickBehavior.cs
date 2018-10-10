@@ -93,23 +93,28 @@ public class StickBehavior : MonoBehaviour {
 	}
 
 	void PaintBurnHits() {
-		var raydir = transform.TransformDirection(Vector3.up);
-        RaycastHit hit;
+		//var raydir = transform.TransformDirection(Vector3.up);
+        var raydir = transform.TransformDirection(Vector3.up);
+		RaycastHit hit;
+		//Debug.Log(raydir);
+		var reverseRayDir = new Vector3(raydir.x, raydir.y, -1 * raydir.z);
+		//Debug.Log(reverseRayDir);
+		RaycastHit hitReverse;
+
+		Debug.Log("raydir: "+ raydir + "reverse raydir: " + reverseRayDir);
 
 		// Cast a ray in direction "up", deteremine what paintable is first hit.
         if (Physics.Raycast (transform.position, raydir, out hit, maxDist, layerMask)) {
 			GameObject g = hit.transform.gameObject;
 
             if (pt != null) {
-				// Paint on the shared PaintableTexture at the (u,v) coordinates
-				// of the point where the ray met the object.
-				//pt.PaintUVBurn (g, hit.textureCoord);
-				var currPos = transform.position;
-				while(hit.point != null){
-					var incrementRayCast = Physics.Raycast (currPos+=Vector3.forward, raydir, out hit, maxDist, layerMask);
-					Debug.Log("Painting (u,v): " + hit.textureCoord + " at " + hit.point);
-
-				}
+				pt.PaintUV(g, hit.textureCoord);
+				Vector3 hitReverseOrigin = new Vector3(transform.position.x, transform.position.y, transform.position.z * -1); 
+				Debug.Log("original origin: " +  transform.position + "reverse origin: " + hitReverseOrigin);
+				Physics.Raycast(hitReverseOrigin, reverseRayDir, out hitReverse, maxDist, layerMask);
+				Debug.Log("original point: " + transform.position + "reversehit origin point" + hitReverseOrigin);
+				pt.PaintUV(g, hitReverse.textureCoord);
+				
 			}
 		}
 	}

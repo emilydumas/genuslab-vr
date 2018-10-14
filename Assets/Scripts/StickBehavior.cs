@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class StickBehavior : MonoBehaviour {
+
+    public OVRInput.Controller Controller;
 	public float maxDist = Mathf.Infinity;
 	private Renderer[] rends;
 	private bool isDrawing = false;
@@ -61,6 +63,11 @@ public class StickBehavior : MonoBehaviour {
         }
     }
 
+    public bool visible()
+    {
+        return isVisible;
+    }
+
 	public void makeInvisible()
 	{
 		setVisibility(false);
@@ -71,7 +78,14 @@ public class StickBehavior : MonoBehaviour {
 	}
 
 	void Update () {
-		if (isDrawing) {
+
+        OVRInput.Update();
+
+        transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
+        transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
+
+
+        if (isDrawing) {
 			if (drill) {
 				PaintAllHits();
 			} else {

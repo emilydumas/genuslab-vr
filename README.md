@@ -6,25 +6,23 @@ A VR experience for Oculus Rift + Touch to explore drawing on a genus two surfac
 
 ## Status
 
-Alpha quality; see [the list of known issues](KNOWN_ISSUES.md).
+Pre-alpha.  Basic features are still under development.
 
 This is a Fall 2018 project in the [Mathematical Computing Laboratory](http://mcl.math.uic.edu/) at UIC.
-
-## Documentation
-
-Keybindings are described in the in-application help screen, which is accessed by pressing 'H' on the keyboard.
 
 ## Requirements
 
 ### For building
 
 * [Unity 3D](http://unity3d.com/unity); developed in version 2018.2.1f1
+* Oculus Rift headset
+* Oculus Touch controllers
 
 ### For running a binary release
 
-* Supported platforms:
-  * Windows
-  * Linux
+* Windows 10
+* Oculus Rift headset
+* Oculus Touch controllers
 
 ## Developers
 

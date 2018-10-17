@@ -9,7 +9,6 @@ public class KbHandControl : MonoBehaviour {
     public GameObject camera;
     public GameObject stickHolder;
     public GameObject surface;
-    public GameObject helpScreenParent;
     public GameObject h2view;
     public float h2speed = 3f;
     private StickBehavior sb;
@@ -26,7 +25,6 @@ public class KbHandControl : MonoBehaviour {
         pt = PaintableTexture.Instance;
         // Todo: replace below with singletons to avoid need for linking in the editor
         sb = stickHolder.GetComponent<StickBehavior>();
-        helpScreen = helpScreenParent.GetComponent<HelpScreen>();
         h2c = h2view.GetComponent<h2viewcontrol>();
         stickInitQ = stickHolder.transform.localRotation;
         cameraInitQ = camera.transform.localRotation;

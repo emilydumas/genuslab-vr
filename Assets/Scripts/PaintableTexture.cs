@@ -12,7 +12,8 @@ using UnityEngine;
 
 // Based on singleton implementation from https://gamedev.stackexchange.com/questions/116009/in-unity-how-do-i-correctly-implement-the-singleton-pattern
 public class PaintableTexture : MonoBehaviour {
-    public Texture target;
+    public Texture target;  // Will find anything that uses this, and link it to the shared texture.
+    public List<Texture> options;
     public float spotSize = 0.001f;
 	public Color paintColor = new Color(0,0,0,1);
 
@@ -21,6 +22,7 @@ public class PaintableTexture : MonoBehaviour {
     private int paintUVPropertyID;
     private int spotColorPropertyID;
     private int spotSizePropertyID;
+    private int currentTextureOption = 0;
     private RenderTexture rt;
     private Dictionary<GameObject,Material> paintMaterials = new Dictionary<GameObject,Material>();
 
@@ -63,6 +65,7 @@ public class PaintableTexture : MonoBehaviour {
         // to the RenderTexture.  Moving this initialization to Start() fixed
         // that problem.
         ReplaceTextureWithRenderTexture(target);
+        Clear();
     }
     private void ReplaceTextureWithRenderTexture(Texture t) {
     	// Create a new rendertexture like t
@@ -107,6 +110,23 @@ public class PaintableTexture : MonoBehaviour {
 	}
 
     public void Clear() {
-		Graphics.Blit(target,rt);
+		Graphics.Blit(options[currentTextureOption],rt);
 	}
+
+    public void SetTexture(int idx) {
+        Debug.Log("Setting to" + idx);
+        currentTextureOption = idx;
+        Clear();
+    }
+
+    public void NextTexture() {
+        SetTexture((currentTextureOption + 1) % options.Count);
+    }
+    public void PreviousTexture() {
+        if (currentTextureOption > 0) {
+            SetTexture(currentTextureOption - 1);
+        } else {
+            SetTexture(options.Count-1);
+        }
+    }
 }

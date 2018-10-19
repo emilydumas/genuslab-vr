@@ -66,12 +66,12 @@ public class KbHandControl : MonoBehaviour {
             sb.makeVisible();
         }
 
-        if (OVRInput.GetDown(OVRInput.RawButton.A))
+        if (OVRInput.GetDown(OVRInput.RawButton.A) || Input.GetKeyDown(KeyCode.Y))
         {
             pt.NextTexture();
         }
 
-        if (OVRInput.GetDown(OVRInput.RawButton.B))
+        if (OVRInput.GetDown(OVRInput.RawButton.B) || Input.GetKeyDown(KeyCode.H))
         {
             pt.PreviousTexture();
         }

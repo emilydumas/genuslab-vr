@@ -66,13 +66,22 @@ public class KbHandControl : MonoBehaviour {
             sb.makeVisible();
         }
 
-        if (OVRInput.GetDown(OVRInput.RawButton.A))
+        if (OVRInput.GetDown(OVRInput.RawButton.A) || Input.GetKeyDown(KeyCode.Y))
         {
-            // Clear all drawing on the PaintableTexture
+            pt.NextTexture();
+        }
+
+        if (OVRInput.GetDown(OVRInput.RawButton.B) || Input.GetKeyDown(KeyCode.H))
+        {
+            pt.PreviousTexture();
+        }
+
+        if (OVRInput.GetDown(OVRInput.RawButton.X))
+        {
             pt.Clear();
         }
 
-        if (OVRInput.GetDown(OVRInput.RawButton.B))
+        if (OVRInput.GetDown(OVRInput.RawButton.Y))
         {
             // Klein-Poincare toggle
             h2c.Toggle();

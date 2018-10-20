@@ -217,7 +217,6 @@ MonoBehaviour:
   camera: {fileID: 1796281674}
   stickHolder: {fileID: 1766946991}
   surface: {fileID: 175034025}
-  helpScreenParent: {fileID: 0}
   h2view: {fileID: 1675142549}
   h2speed: 3
 --- !u!4 &300956910
@@ -256,7 +255,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced4e22afe0353447b04290fe1f649e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 2800000, guid: 1e3cf0f344468489c8ab12b818efd301, type: 3}
+  target: {fileID: 2800000, guid: 70a1942c93932ee48ab8b608641edec1, type: 3}
+  options:
+  - {fileID: 2800000, guid: 70a1942c93932ee48ab8b608641edec1, type: 3}
+  - {fileID: 2800000, guid: ac3ef87efeda88841bbf0ef3634f4fa9, type: 3}
+  - {fileID: 2800000, guid: a6d90e087738fbc4f8e8f672a5fac660, type: 3}
+  - {fileID: 2800000, guid: dce94960ae16baf409fea2afe3e9054a, type: 3}
+  - {fileID: 2800000, guid: 28959e806eada4e4c8249566e3d99492, type: 3}
   spotSize: 0.0002
   paintColor: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 1}
 --- !u!1 &612752974
@@ -427,15 +432,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400002, guid: 72a46496775ba42659b557db9f745859, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.73
+      value: -1.234
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 72a46496775ba42659b557db9f745859, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.567
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 72a46496775ba42659b557db9f745859, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -6.119
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 72a46496775ba42659b557db9f745859, type: 3}
       propertyPath: m_LocalRotation.x
@@ -480,6 +485,18 @@ Prefab:
     - target: {fileID: 100000, guid: 72a46496775ba42659b557db9f745859, type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 400002, guid: 72a46496775ba42659b557db9f745859, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400002, guid: 72a46496775ba42659b557db9f745859, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 400002, guid: 72a46496775ba42659b557db9f745859, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72a46496775ba42659b557db9f745859, type: 3}
@@ -873,3 +890,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2115902967 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 109308, guid: 126d619cf4daa52469682f85c1378b4a,
+    type: 2}
+  m_PrefabInternal: {fileID: 1315478105}
+--- !u!114 &2115902969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2115902967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81d8960227b457a41b5750febc88e5dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  surface: {fileID: 1838378358}

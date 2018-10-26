@@ -90,52 +90,65 @@ public class StickBehavior : MonoBehaviour {
         Vector3 raydir = transform.TransformDirection(Vector3.up);
 		Vector3 pos = transform.position;
         RaycastHit hit;
+		List<Vector3> hitList = new List<Vector3>();
 
 		while (Physics.Raycast (pos, raydir, out hit, maxDist, layerMask)) {
 			GameObject g = hit.transform.gameObject;
 			pt.PaintUV (g, hit.textureCoord);
-
+			hitList.Add(hit.transform.position);
 			pos = hit.point + 0.001f*raydir; // move slightly forward of latest hit
+		}
+		//backwards
+		if(hitList.Count != 0){
+			Vector3 backHitStart =  new Vector3(0,0,1)+ hitList[hitList.Count -1];
+			hitList.Add(backHitStart);
+			hitList.Reverse();
+			for(int i = 0; i < hitList.Count - 2; i++){
+				if(Physics.Raycast (hitList[i], -raydir, out hit, Vector3.Distance(hitList[i],
+				 hitList[i+1]), layerMask)){
+				pt.PaintUV(gameObject, hit.textureCoord);
+			 	}
+			}
 		}
 	}
 
 	void PaintBurnHits() {
 		// Currently only paints two hits: Frontmost and backmost
 
-        var raydir = transform.TransformDirection(Vector3.up);
-		RaycastHit hit;
+        // var raydir = transform.TransformDirection(Vector3.up);
+		// RaycastHit hit;
 
-		// Cast a ray in direction "up", determine what paintable is first hit.
-		// This is the forward ray.  It starts at the position of the stick.
-        if (Physics.Raycast (transform.position, raydir, out hit, maxDist, layerMask)) {
-			GameObject g = hit.transform.gameObject;
-            if (pt != null) {
-				pt.PaintUV(g, hit.textureCoord);
-			}
-		}
+		// // Cast a ray in direction "up", determine what paintable is first hit.
+		// // This is the forward ray.  It starts at the position of the stick.
+        // if (Physics.Raycast (transform.position, raydir, out hit, maxDist, layerMask)) {
+		// 	GameObject g = hit.transform.gameObject;
+        //     if (pt != null) {
+		// 		pt.PaintUV(g, hit.textureCoord);
+		// 	}
+		// }
 
-		// Now, the backward ray.  It starts at (stick position) + maxDist*(forward ray direction).
-		if (Physics.Raycast(transform.position + maxForward*raydir, -raydir, out hit, maxDist, layerMask)) {
-			Debug.Log("Backward raycast found a hit");
-			GameObject g = hit.transform.gameObject;
-			if (pt != null) {
-				pt.PaintUV(g, hit.textureCoord);
-			}
-		}
+		// // Now, the backward ray.  It starts at (stick position) + maxDist*(forward ray direction).
+		// if (Physics.Raycast(transform.position + maxForward*raydir, -raydir, out hit, maxDist, layerMask)) {
+		// 	Debug.Log("Backward raycast found a hit");
+		// 	GameObject g = hit.transform.gameObject;
+		// 	if (pt != null) {
+		// 		pt.PaintUV(g, hit.textureCoord);
+		// 	}
+		// }
 	}
 
     void PaintFirstHit() {
-		// Local "up"
-        var raydir = transform.TransformDirection(Vector3.up);
-        RaycastHit hit;
+		// // Local "up"
+        // var raydir = transform.TransformDirection(Vector3.up);
+        // RaycastHit hit;
 
-		if (pt == null)
-			return;
+		// if (pt == null)
+		// 	return;
 
-		// Cast a ray in direction "up", deteremine what paintable is first hit.
-        if (Physics.Raycast (transform.position, raydir, out hit, maxDist, layerMask)) {
-			GameObject g = hit.transform.gameObject;
-			pt.PaintUV (g, hit.textureCoord);
-		}
+		// // Cast a ray in direction "up", deteremine what paintable is first hit.
+        // if (Physics.Raycast (transform.position, raydir, out hit, maxDist, layerMask)) {
+		// 	GameObject g = hit.transform.gameObject;
+		// 	pt.PaintUV (g, hit.textureCoord);
+		// }
 	}
 }

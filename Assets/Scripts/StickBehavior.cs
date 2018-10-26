@@ -32,6 +32,8 @@ public class StickBehavior : MonoBehaviour {
 		// Paintable objects must all live in a layer called "Paintable"
 		layerMask = (1 << LayerMask.NameToLayer("Paintable"));
 		makeInvisible();
+        this.paint1.Set(0.0f, 0.0f);
+        this.paint2.Set(0.0f, 0.0f);
 	}
 
 	// Set whether the GameObject is currently drawing.
@@ -88,8 +90,10 @@ public class StickBehavior : MonoBehaviour {
 
         transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
         transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
-
-        this.paint1 = this.paint2;
+        if (this.paint2.x != 0.0f || this.paint2.y != 0.0f) {
+            this.paint1 = this.paint2;
+        }
+        
 
 
         if (isDrawing) {
@@ -133,11 +137,25 @@ public class StickBehavior : MonoBehaviour {
                 paint1.Set(paint1.x + 0.001f, paint1.x * M + b);
                 pt.PaintUV(g, paint1);
             }
-            else
+            else if (this.paint1.x > this.paint2.x)
             {
                 paint2.Set(paint2.x + 0.001f, paint2.x * M + b);
                 pt.PaintUV(g, paint2);
             }
+            else
+            {
+                if (paint2.y > paint1.y)
+                {
+                    paint1.Set(paint1.x, paint1.y + 0.001f);
+                    pt.PaintUV(g, paint1);
+                }
+                else
+                {
+                    paint2.Set(paint2.x, paint2.y + 0.001f);
+                    pt.PaintUV(g, paint2);
+                }
+            }
+
         }
     }
 

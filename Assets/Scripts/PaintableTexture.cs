@@ -89,7 +89,9 @@ public class PaintableTexture : MonoBehaviour {
 				mcopy.SetTexture(mainTexturePropertyID, rt);
                 PaintData pd = go.GetComponent<PaintData>();
                 if (pd != null ) {
-                    paintMaterials[go] = pd.paintMaterial;
+                    // We duplicate the paintMaterial specified in the scene so that
+                    // changes to its properties (as in PaintUV) do not get written to disk.
+                    paintMaterials[go] = new Material(pd.paintMaterial);
                 } else {
                     paintMaterials[go] = null;
                 }

@@ -262,6 +262,7 @@ MonoBehaviour:
   - {fileID: 2800000, guid: a6d90e087738fbc4f8e8f672a5fac660, type: 3}
   - {fileID: 2800000, guid: dce94960ae16baf409fea2afe3e9054a, type: 3}
   - {fileID: 2800000, guid: 28959e806eada4e4c8249566e3d99492, type: 3}
+  - {fileID: 2800000, guid: 4c9e5ec0dc37162458c23ac540d76061, type: 3}
   spotSize: 0.0002
   paintColor: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 1}
 --- !u!1 &612752974

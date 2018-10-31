@@ -119,8 +119,9 @@ Shader "CStandard"
             Tags { "LightMode" = "ForwardAdd" }
             Blend [_SrcBlend] One
             Fog { Color (0,0,0,0) } // in additive pass fog should be black
-            ZWrite Off
-            ZTest LEqual
+            ZWrite On
+            Cull Off
+            //ZTest LEqual
 
             CGPROGRAM
             #pragma target 3.0
@@ -150,8 +151,9 @@ Shader "CStandard"
         Pass {
             Name "ShadowCaster"
             Tags { "LightMode" = "ShadowCaster" }
-
-            ZWrite On ZTest LEqual
+            ZWrite On
+            Cull Off
+            //ZWrite On ZTest LEqual
 
             CGPROGRAM
             #pragma target 3.0
@@ -180,7 +182,8 @@ Shader "CStandard"
         {
             Name "DEFERRED"
             Tags { "LightMode" = "Deferred" }
-
+            ZWrite On
+            Cull Off
             CGPROGRAM
             #pragma target 3.0
             #pragma exclude_renderers nomrt

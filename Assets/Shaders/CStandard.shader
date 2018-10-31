@@ -83,7 +83,7 @@ Shader "CStandard"
             Tags { "LightMode" = "ForwardBase" }
 
             Blend [_SrcBlend] [_DstBlend]
-            ZWrite [_ZWrite]
+            ZWrite On
             Cull Off
             
             CGPROGRAM

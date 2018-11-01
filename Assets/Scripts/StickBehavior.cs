@@ -49,7 +49,7 @@ public class StickBehavior : MonoBehaviour {
 	}
 
 	// Set whether the GameObject is currently drilling through paintable
-	// objects.  NOT CURRENTLY IMPLEMENTED.
+	// objects.
 	public void setDrill(bool d)
 	{
 		drill = d;
@@ -91,9 +91,9 @@ public class StickBehavior : MonoBehaviour {
 		Vector3 pos = transform.position;
         RaycastHit hit;
 		List<Vector3> hitList = new List<Vector3>();
-		var currP = pos;
 		GameObject gObject = null;  
 
+	    // Forward pass: record hits (ray enters surface) and paint them
 		while (Physics.Raycast (pos, raydir, out hit, maxDist, layerMask)) {
 			GameObject g = hit.transform.gameObject;
 			gObject = g;
@@ -102,73 +102,33 @@ public class StickBehavior : MonoBehaviour {
 			pos = hit.point + 0.001f*raydir; // move slightly forward of latest hit
 		}
 		
-		//backwards
+		// Backward pass: Detect surface exits and paint them
 		if(hitList.Count != 0){
-			Vector3 backHitStart =  hitList[hitList.Count -1] + (8*raydir);
+			Vector3 backHitStart =  hitList[hitList.Count -1] + (maxForward*raydir);
 			hitList.Add(backHitStart);
-			Debug.Log(hitList[0]);
-			//Debug.Log(hitList[1]);
 			hitList.Reverse();
-			Debug.Log(hitList[0]);
-			//Debug.Log(hitList[1]);
 			for(int i = 0; i < hitList.Count; i++){
 				if(Physics.Raycast (hitList[i], (-1 * raydir), out hit, maxDist, layerMask)){
 					pt.PaintUV(gObject, hit.textureCoord);
 			 	}
 			}
 		}
-		// do{
-		// 	Physics.Raycast(currP, raydir, out hit, maxDist, layerMask);
-		// 	gObject = hit.transform.gameObject;
-		// 	Debug.Log("currP: " + currP);
-		// 	pt.PaintUV(gObject, hit.textureCoord);
-		// 	Debug.Log("currP texture: " + hit.textureCoord);
-		// 	Vector3 q = hit.point;
-		// 	Debug.Log("q: " + q);
-		// 	Physics.Raycast(q, (-1 * raydir), out hit, maxDist, layerMask);
-		// 	Debug.Log("q texture: " + hit.textureCoord);
-		// 	pt.PaintUV(gObject, hit.textureCoord);
-		// 	currP = q;
-		// }while(Physics.Raycast(currP, raydir, out hit, maxDist, layerMask));
+	}
+	void PaintFirstHit() {
+		// Local "up"
+        var raydir = transform.TransformDirection(Vector3.up);
+        RaycastHit hit;
+
+		// Cast a ray in direction "up", deteremine what paintable is first hit.
+        if (Physics.Raycast (transform.position, raydir, out hit, maxDist, layerMask)) {
+			GameObject g = hit.transform.gameObject;
+
+            if (pt != null) {
+				// Paint on the shared PaintableTexture at the (u,v) coordinates
+				// of the point where the ray met the object.
+				pt.PaintUV (g, hit.textureCoord);
+			}
+		}
 	}
 
-	void PaintBurnHits() {
-		// Currently only paints two hits: Frontmost and backmost
-
-        // var raydir = transform.TransformDirection(Vector3.up);
-		// RaycastHit hit;
-
-		// // Cast a ray in direction "up", determine what paintable is first hit.
-		// // This is the forward ray.  It starts at the position of the stick.
-        // if (Physics.Raycast (transform.position, raydir, out hit, maxDist, layerMask)) {
-		// 	GameObject g = hit.transform.gameObject;
-        //     if (pt != null) {
-		// 		pt.PaintUV(g, hit.textureCoord);
-		// 	}
-		// }
-
-		// // Now, the backward ray.  It starts at (stick position) + maxDist*(forward ray direction).
-		// if (Physics.Raycast(transform.position + maxForward*raydir, -raydir, out hit, maxDist, layerMask)) {
-		// 	Debug.Log("Backward raycast found a hit");
-		// 	GameObject g = hit.transform.gameObject;
-		// 	if (pt != null) {
-		// 		pt.PaintUV(g, hit.textureCoord);
-		// 	}
-		// }
-	}
-
-    void PaintFirstHit() {
-		// // Local "up"
-        // var raydir = transform.TransformDirection(Vector3.up);
-        // RaycastHit hit;
-
-		// if (pt == null)
-		// 	return;
-
-		// // Cast a ray in direction "up", deteremine what paintable is first hit.
-        // if (Physics.Raycast (transform.position, raydir, out hit, maxDist, layerMask)) {
-		// 	GameObject g = hit.transform.gameObject;
-		// 	pt.PaintUV (g, hit.textureCoord);
-		// }
-	}
 }

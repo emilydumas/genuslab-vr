@@ -98,10 +98,8 @@ public class StickBehavior : MonoBehaviour {
 			GameObject g = hit.transform.gameObject;
 			gObject = g;
 			pt.PaintUV (g, hit.textureCoord);
-			hitList.Add(hit.transform.position);
+			hitList.Add(hit.point);
 			pos = hit.point + 0.001f*raydir; // move slightly forward of latest hit
-			//Physics.Raycast (pos, raydir, out hit, maxDist, layerMask);
-			//pt.PaintUV (g, hit.textureCoord);
 		}
 		
 		//backwards

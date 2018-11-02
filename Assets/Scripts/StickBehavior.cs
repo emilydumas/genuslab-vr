@@ -17,12 +17,17 @@ public class StickBehavior : MonoBehaviour {
 	public float maxDist = Mathf.Infinity;
 	private Renderer[] rends;
 	private bool isDrawing = false;
-	private bool isVisible = true;
+	private bool isVisible = false;
 	private bool drill = false; // not supported yet
 	private PaintableTexture pt;
 	private LayerMask layerMask = Physics.DefaultRaycastLayers;
 
+<<<<<<< Updated upstream
 
+=======
+    private Vector3 firstCapture;
+    private Vector3 secondCapture;
+>>>>>>> Stashed changes
 	
 	void Start () {
 		rends = gameObject.GetComponentsInChildren<Renderer>();
@@ -30,6 +35,7 @@ public class StickBehavior : MonoBehaviour {
         pt = PaintableTexture.Instance;
 		// Paintable objects must all live in a layer called "Paintable"
 		layerMask = (1 << LayerMask.NameToLayer("Paintable"));
+        this.firstCapture.Set(-999, -999, -999);
 		makeInvisible();
 	}
 
@@ -81,6 +87,7 @@ public class StickBehavior : MonoBehaviour {
 
 	void Update () {
 
+<<<<<<< Updated upstream
 
 
         OVRInput.Update();
@@ -88,24 +95,109 @@ public class StickBehavior : MonoBehaviour {
         transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
         transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
         
+=======
+        //checks if we were drawing in the previous scene
+        if (isDrawing)
+        {
+            this.firstCapture = this.secondCapture;
+        }
+
+        //OVRInput.Update();
+
+        //transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
+        //transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
+>>>>>>> Stashed changes
 
 
         if (isDrawing) {
+            this.secondCapture = transform.localPosition;
 			if (drill) {
 				PaintAllHits();
+<<<<<<< Updated upstream
 			} else {
                 PaintFirstHit();
                 
+=======
+>>>>>>> Stashed changes
 			}
-		}
-	}
+            else
+            {
+                if (this.firstCapture.x <= -999)
+                {
+                    PaintFirstHit();
+                }
+                else
+                {
+                    PaintBetween();
+                }
+
+            }
+        }
+        if (!isDrawing)
+        {
+            this.firstCapture.Set(-999, -999, -999);
+        }
+    }
 
 	void PaintAllHits() {
 		Debug.Log("PAINTING ALL HITS NOT IMPLEMENTED.");
 		PaintFirstHit();
 	}
 
+<<<<<<< Updated upstream
   
+=======
+    void PaintBetween()
+    {
+        float dist = Vector3.Distance(this.secondCapture, this.firstCapture);
+
+        float[] interps = new float[8];
+
+        Vector3 positionInterp;
+        Vector3 directionInterp;
+
+        interps[0] = (dist * (2 / 10));
+        interps[1] = (dist * (3 / 10));
+        interps[2] = (dist * (4 / 10));
+        interps[3] = (dist * (5 / 10));
+        interps[4] = (dist * (6 / 10));
+        interps[5] = (dist * (7 / 10));
+        interps[6] = (dist * (8 / 10));
+        interps[7] = (dist * (9 / 10));
+
+
+        for (int j = 0; j < 8; j++)
+        {
+            positionInterp = Vector3.Lerp(this.secondCapture, this.firstCapture, interps[j]);
+            directionInterp = Vector3.Slerp(this.secondCapture, this.firstCapture, interps[j]);
+
+            PaintFirstHit(positionInterp, directionInterp);
+        }
+
+
+    }
+
+    void PaintFirstHit(Vector3 positionInterp, Vector3 directionInterp)
+    {
+        // Local "up"
+        
+
+        RaycastHit hit;
+
+        // Cast a ray in direction "up", deteremine what paintable is first hit.
+        if (Physics.Raycast(positionInterp, directionInterp, out hit, maxDist, layerMask))
+        {
+            GameObject g = hit.transform.gameObject;
+
+            if (pt != null)
+            {
+                // Paint on the shared PaintableTexture at the (u,v) coordinates
+                // of the point where the ray met the object.
+                pt.PaintUV(g, hit.textureCoord);
+            }
+        }
+    }
+>>>>>>> Stashed changes
 
     void PaintFirstHit() {
 		// Local "up"
@@ -126,4 +218,5 @@ public class StickBehavior : MonoBehaviour {
 		}
      
 	}
+    
 }

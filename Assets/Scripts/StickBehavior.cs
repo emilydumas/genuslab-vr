@@ -21,6 +21,10 @@ public class StickBehavior : MonoBehaviour {
 	private bool drill = false; // not supported yet
 	private PaintableTexture pt;
 	private LayerMask layerMask = Physics.DefaultRaycastLayers;
+
+    private Vector3 firstCapture;
+    private Vector3 secondCapture;
+
 	
 	void Start () {
 		rends = gameObject.GetComponentsInChildren<Renderer>();
@@ -28,6 +32,7 @@ public class StickBehavior : MonoBehaviour {
         pt = PaintableTexture.Instance;
 		// Paintable objects must all live in a layer called "Paintable"
 		layerMask = (1 << LayerMask.NameToLayer("Paintable"));
+        this.firstCapture = null;
 		makeInvisible();
 	}
 
@@ -78,6 +83,12 @@ public class StickBehavior : MonoBehaviour {
 	}
 
 	void Update () {
+        
+        //If in the last update(tied to frame) we were drawing, we set the first Capture to be last frame's second capture
+        if (isDrawing)
+        {
+            this.firstCapture = this.secondCapture;
+        }
 
         OVRInput.Update();
 
@@ -85,14 +96,38 @@ public class StickBehavior : MonoBehaviour {
         transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
 
 
+
         if (isDrawing) {
+            this.secondCapture = transform.localPosition;      //get the 2nd position as soon as we start drawing
 			if (drill) {
 				PaintAllHits();
 			} else {
-				PaintFirstHit();
+                if (this.firstCapture.x <= -999)
+                {
+                    PaintFirstHit();
+                }
+                else
+                {
+                    PaintBetween();
+                }
 			}
+            
 		}
+        if (!isDrawing)
+        {
+            this.firstCapture.Set(-999, -999, -999);      //as as we are not drawing, we set the first capture to Some Riduculous Number
+                                                          //to setup for next capture
+        }
 	}
+
+    void PaintBetween()
+    {
+        //take the first and second captures and create a number of raycasts inbetween those two
+
+        float middle = Vector3.Distance(this.secondCapture, this.firstCapture);
+
+        //Gonna use a lerp!
+    }
 
 	void PaintAllHits() {
 		Debug.Log("PAINTING ALL HITS NOT IMPLEMENTED.");
@@ -112,7 +147,9 @@ public class StickBehavior : MonoBehaviour {
 				// Paint on the shared PaintableTexture at the (u,v) coordinates
 				// of the point where the ray met the object.
 				pt.PaintUV (g, hit.textureCoord);
+               
 			}
 		}
+        
 	}
 }

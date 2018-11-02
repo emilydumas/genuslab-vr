@@ -55,7 +55,6 @@ public class KbHandControl : MonoBehaviour {
     void Update()
     {
         float dt = Time.deltaTime;
-
         // CTRL-Q on keyboard quits the application
         // (We expect that quit will sometimes be done after headset removal.)
         // TODO: Make a good way to quit from within VR scene.
@@ -83,11 +82,14 @@ public class KbHandControl : MonoBehaviour {
 
         if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
         {
-            sb.startDrawing();
+            if (sb.drawing() == false)
+                sb.startDrawing();
+            else
+                sb.stopDrawing();
         }
-        else if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
-        {
-            sb.stopDrawing();
-        }
+        //else if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
+        //{
+        //    sb.stopDrawing();
+        //}
     }
 }

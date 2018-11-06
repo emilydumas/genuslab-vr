@@ -169,29 +169,37 @@ public class KbMouseControl : MonoBehaviour {
 			h2c.ComposePreTransformation(HypUtil.BoostX(-h2speed*dt));
 			h2c.ExportPreTransformation();
 		}
+        
 
 
-		// Walk & strafe according to keyboard
-		float horiz = Input.GetAxis ("Horizontal") * speed;
+        // Walk & strafe according to keyboard
+        float horiz = Input.GetAxis ("Horizontal") * speed;
 		float depth = Input.GetAxis ("Vertical") * speed;
 		camera.transform.Translate (horiz * dt, 0f, depth * dt);
 	    if (mouseMode == MouseMode.Rotate) {
 			surface.transform.position = camera.transform.position + surfaceDelta;
 		}
-
+        
 		if (mouseMode == MouseMode.Look) {
 			Vector2 mp = AbsMousePos ();
 			camera.transform.localRotation = cameraInitQ * Quaternion.Euler(0,turnRange*mp.x,0);
 		}
-		if (mouseMode == MouseMode.Stick) {
-			if (Input.GetKey(KeyCode.LeftShift) || Input.GetMouseButton(0)) {
-				sb.startDrawing();
-			} else {
-				sb.stopDrawing();
-			}
-			Vector2 mp = AbsMousePos ();
-			stickHolder.transform.localRotation = stickInitQ * Quaternion.Euler(-0.5f*stickRange*mp.y,0,-0.5f*stickRange*mp.x);
-		}
+        if (mouseMode == MouseMode.Stick)
+        {
+            if (Input.GetKey(KeyCode.LeftShift) || Input.GetMouseButton(0))
+            {
+                sb.findColor();
+                sb.startDrawing();
+            }
+            else
+            {
+                sb.stopColorSearch();
+                sb.stopDrawing();
+            }
+       
+            Vector2 mp = AbsMousePos();
+            stickHolder.transform.localRotation = stickInitQ * Quaternion.Euler(-0.5f * stickRange * mp.y, 0, -0.5f * stickRange * mp.x);
+        }
 		if (mouseMode == MouseMode.Rotate) {
 			Vector2 mp = AbsMousePos ();
 			// TODO: Make this a more intuitive trackball-style object rotation interface.

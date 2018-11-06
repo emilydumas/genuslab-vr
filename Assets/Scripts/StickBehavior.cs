@@ -17,11 +17,16 @@ public class StickBehavior : MonoBehaviour
     public OVRInput.Controller Controller;
     public float maxDist = Mathf.Infinity;
     private Renderer[] rends;
+    private bool isVR;
+    private bool checkColor = false;
     private bool isDrawing = false;
     private bool isVisible = false;
     private bool drill = false; // not supported yet
     private PaintableTexture pt;
     private LayerMask layerMask = Physics.DefaultRaycastLayers;
+    private LayerMask colorMask = Physics.DefaultRaycastLayers;
+    
+
 
     private Vector3 lastDirection;
     private Vector3 lastPosition = new Vector3(float.NaN,float.NaN,float.NaN);
@@ -33,6 +38,11 @@ public class StickBehavior : MonoBehaviour
         pt = PaintableTexture.Instance;
         // Paintable objects must all live in a layer called "Paintable"
         layerMask = (1 << LayerMask.NameToLayer("Paintable"));
+        colorMask = (1 << LayerMask.NameToLayer("Color"));
+        if (OVRInput.IsControllerConnected(OVRInput.Controller.RTouch))
+            setVR();
+        else
+            setMouseAndKeyboard();
         makeInvisible();
     }
 
@@ -90,15 +100,46 @@ public class StickBehavior : MonoBehaviour
         setVisibility(true);
     }
 
+    public void setVR()
+    {
+        isVR = true;
+    }
+
+    public void setMouseAndKeyboard()
+    {
+        isVR = false;
+    }
+
+    public void findColor()
+    {
+        checkColor = true;
+    }
+
+    public void stopColorSearch()
+    {
+        checkColor = false;
+    }
+
     void Update()
     {
-        OVRInput.Update();
 
-        transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
-        transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
+        
+        //Defaults to using mouse and keyboard if no Right VR controller is present at start()
+        if (isVR)
+        {
+            OVRInput.Update();
+            transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
+            transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
+        }
+
+        
+        if (checkColor)
+        {
+            setColor();
+        }
 
         if (isDrawing)
-        {
+            {
             if (drill)
             {
                 PaintAllHits();
@@ -178,6 +219,22 @@ public class StickBehavior : MonoBehaviour
         // Local "up"
         var raydir = transform.TransformDirection(Vector3.up);
         PaintRay(transform.position, raydir);
+    }
+
+    public void setColor()
+    {
+        RaycastHit hit;
+        var raydir = transform.TransformDirection(Vector3.up);
+        if (Physics.Raycast(transform.localPosition, raydir, out hit, maxDist, colorMask))
+        {
+            GameObject g = hit.transform.gameObject;
+
+            Color c = new Color();
+            c = g.GetComponent<Renderer>().material.color;
+
+            pt.SetDrawingColor(c);
+          
+        }
     }
 
 }

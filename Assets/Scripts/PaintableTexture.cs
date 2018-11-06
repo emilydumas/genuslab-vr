@@ -14,7 +14,7 @@ using UnityEngine;
 public class PaintableTexture : MonoBehaviour {
     public Texture target;
     public float spotSize = 0.001f;
-	public Color paintColor = new Color(0,0,0,1);
+    public Color paintColor;
 
     private static PaintableTexture _instance;
     private int mainTexturePropertyID;
@@ -109,4 +109,9 @@ public class PaintableTexture : MonoBehaviour {
     public void Clear() {
 		Graphics.Blit(target,rt);
 	}
+
+    public void SetDrawingColor(Color paintColor)
+    {
+        this.paintColor = paintColor;
+    }
 }

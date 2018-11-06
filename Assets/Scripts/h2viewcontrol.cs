@@ -16,19 +16,29 @@ public class h2viewcontrol : MonoBehaviour {
 	private Matrix4x4 PreTransformation = Matrix4x4.identity;
 	private Material m = null;  // Target material with hypview shader
 	private Material pm = null;  // Target material with h2paint shader
+	public float h2speed = 3f;
+
 
 	void Start () {
-		Renderer r = gameObject.GetComponent<Renderer>();
-
+		
+		Renderer r = gameObject.GetComponent<Renderer>(); 
 		if (r != null) {
 			m = r.material;
 		}
 
 		PaintData pd = gameObject.GetComponent<PaintData>();
 		pm = pd.paintMaterial;
-
+		EventHandler.StartListening("ToggleView", Toggle);
+		EventHandler.StartListening("ToggleView", ExportMode);
+		EventHandler.StartListening("MoveUp", MoveUp);
+		EventHandler.StartListening("MoveDown", MoveDown);
+		EventHandler.StartListening("MoveRight", MoveRight);
+		EventHandler.StartListening("MoveLeft", MoveLeft);
+		EventHandler.StartListening("Reset",ResetPreTransformation);
+		EventHandler.StartListening("Reset", ExportPreTransformation);
 		ExportMode();
 		ExportPreTransformation();
+		
 	}
 
 	public void Toggle() {
@@ -77,4 +87,26 @@ public class h2viewcontrol : MonoBehaviour {
 			pm.SetMatrix("_PreTransformation",PreTransformation);
 		}
 	}
+
+	public void MoveUp() {
+			float dt = Time.deltaTime;
+			ComposePreTransformation(HypUtil.BoostY(-h2speed*dt));
+			ExportPreTransformation();
+		}
+
+	public void MoveDown() {
+			float dt = Time.deltaTime;
+			ComposePreTransformation(HypUtil.BoostY(h2speed*dt));
+			ExportPreTransformation();
+		}
+	public void MoveLeft() {
+			float dt = Time.deltaTime;	
+			ComposePreTransformation(HypUtil.BoostX(h2speed*dt));
+			ExportPreTransformation();
+		}
+	public void MoveRight() {
+			float dt = Time.deltaTime;
+			ComposePreTransformation(HypUtil.BoostX(-h2speed*dt));
+			ExportPreTransformation();
+		}
 }

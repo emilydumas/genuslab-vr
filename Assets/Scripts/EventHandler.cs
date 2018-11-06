@@ -4,12 +4,11 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class EventHandler : MonoBehaviour {
-	public GameObject h2view;
-	private h2viewcontrol h2c;
-	private static EventHandler eventHandler;
-	private PaintableTexture pt = null;
-	public float h2speed = 3f;
 
+
+	private Dictionary <string, UnityEvent> eventDictionary;
+
+	private static  EventHandler eventHandler;
 	// Singleton!
 	public static EventHandler instance
 	{
@@ -35,59 +34,42 @@ public class EventHandler : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		h2c = h2view.GetComponent<h2viewcontrol>();
-		pt = PaintableTexture.Instance;
+		if(eventDictionary == null){
+			eventDictionary = new Dictionary<string,UnityEvent>();
+		}
 	}
 	
-	// Update is called once per frame
-	public void handleEvent(string eventName){
-		if (eventName=="Toggle"){
-			instance.Toggle();
-		}
-		if(eventName=="Clear"){
-			instance.Clear();
-		}
-		if(eventName=="Reset"){
-			instance.Reset();
-		}
-		
-	}
+    public static void StartListening (string eventName, UnityAction listener)
+    {
+        UnityEvent thisEvent = null;
+        if (instance.eventDictionary.TryGetValue (eventName, out thisEvent))
+        {
+            thisEvent.AddListener (listener);
+        } 
+        else
+        {
+            thisEvent = new UnityEvent ();
+            thisEvent.AddListener (listener);
+            instance.eventDictionary.Add (eventName, thisEvent);
+        }
+    }
 
-	void Toggle(){
-			h2c.Toggle();
-			h2c.ExportMode();
-			print("the");
-	}
+    public static void StopListening (string eventName, UnityAction listener)
+    {
+        if (eventHandler == null) return;
+        UnityEvent thisEvent = null;
+        if (instance.eventDictionary.TryGetValue (eventName, out thisEvent))
+        {
+            thisEvent.RemoveListener (listener);
+        }
+    }
 
-	void Clear(){
-		pt.Clear();
-	}
-
-	public void Move(string eventName){
-		
-		float dt = Time.deltaTime;
-		if (eventName=="MoveDown") {
-			h2c.ComposePreTransformation(HypUtil.BoostY(-h2speed*dt));
-			h2c.ExportPreTransformation();
-		}
-
-		if (eventName=="MoveUp") {
-			h2c.ComposePreTransformation(HypUtil.BoostY(h2speed*dt));
-			h2c.ExportPreTransformation();
-		}
-		if (eventName=="MoveLeft") {
-			h2c.ComposePreTransformation(HypUtil.BoostX(h2speed*dt));
-			h2c.ExportPreTransformation();
-		}
-		if (eventName=="MoveRight") {
-			h2c.ComposePreTransformation(HypUtil.BoostX(-h2speed*dt));
-			h2c.ExportPreTransformation();
-		}
-	}
-
-	void Reset(){
-			h2c.ResetPreTransformation();
-			h2c.ExportPreTransformation();
-		
-	}
+    public static void TriggerEvent (string eventName)
+    {
+        UnityEvent thisEvent = null;
+        if (instance.eventDictionary.TryGetValue (eventName, out thisEvent))
+        {
+            thisEvent.Invoke ();
+        }
+    }
 }

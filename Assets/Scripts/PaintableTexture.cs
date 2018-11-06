@@ -16,7 +16,6 @@ public class PaintableTexture : MonoBehaviour {
     public List<Texture> options;
     public float spotSize = 0.001f;
 	public Color paintColor = new Color(0,0,0,1);
-
     private static PaintableTexture _instance;
     private int mainTexturePropertyID;
     private int paintUVPropertyID;
@@ -65,6 +64,8 @@ public class PaintableTexture : MonoBehaviour {
         // to the RenderTexture.  Moving this initialization to Start() fixed
         // that problem.
         ReplaceTextureWithRenderTexture(target);
+        EventHandler.StartListening("Clear", Clear); 
+        EventHandler.StartListening("Toggle", NextTexture); 
         Clear();
     }
     private void ReplaceTextureWithRenderTexture(Texture t) {

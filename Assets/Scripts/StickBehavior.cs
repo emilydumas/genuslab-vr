@@ -13,13 +13,14 @@ using UnityEngine;
 
 public class StickBehavior : MonoBehaviour
 {
-
+    
     public OVRInput.Controller Controller;
     public float maxDist = Mathf.Infinity;
     private Renderer[] rends;
     private bool isDrawing = false;
     private bool isVisible = false;
     private bool drill = false; // not supported yet
+    private OVRGrabbable gb;
     private PaintableTexture pt;
     private LayerMask layerMask = Physics.DefaultRaycastLayers;
 
@@ -90,32 +91,37 @@ public class StickBehavior : MonoBehaviour
         setVisibility(true);
     }
 
+
     void Update()
     {
-        OVRInput.Update();
+        //Keeping as legacy from laser pointer as hand
+        //OVRInput.Update();
+        //transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
+        //transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
 
-        transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
-        transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
+        //if (gb.isGrabbed())
+      //  {
+            if (isDrawing)
+            {
+                if (drill)
+                {
+                    PaintAllHits();
+                }
+                else
+                {
+                    //              PaintFirstHit();
+                    PaintWithInterpolation();
+                }
+            }
 
-        if (isDrawing)
-        {
-            if (drill)
+            //checks if we were drawing in the previous scene
+            if (isDrawing)
             {
-                PaintAllHits();
+                this.lastPosition = transform.position;
+                this.lastDirection = transform.TransformDirection(Vector3.up);
             }
-            else
-            {
-//              PaintFirstHit();
-                PaintWithInterpolation();
-            }
-        }
+       // }
         
-        //checks if we were drawing in the previous scene
-        if (isDrawing)
-        {
-            this.lastPosition = transform.position;
-            this.lastDirection = transform.TransformDirection(Vector3.up);
-        }
     }
 
     void PaintAllHits()

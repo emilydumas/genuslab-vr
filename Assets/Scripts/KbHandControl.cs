@@ -90,11 +90,11 @@ public class KbHandControl : MonoBehaviour {
 
         if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
         {
-            sb.startDrawing();
+            sb.makeActive();
         }
         else if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
         {
-            sb.stopDrawing();
+            sb.makeInactive();
         }
     }
 }

@@ -15,8 +15,12 @@ public class StickBehavior : MonoBehaviour {
 
     public OVRInput.Controller Controller;
 	public float maxDist = Mathf.Infinity;
+	public Material inactiveBeamMaterial;
+	public Material activeBeamMaterial;
 	private Renderer[] rends;
-	private bool isDrawing = false;
+	private Renderer beamRenderer;
+	private Rigidbody beamRB;
+	private bool isActive = false;  // When "active", the laser draws on things and presses buttons
 	private bool isVisible = true;
 	private bool drill = false; // not supported yet
 	private PaintableTexture pt;
@@ -28,23 +32,50 @@ public class StickBehavior : MonoBehaviour {
         pt = PaintableTexture.Instance;
 		// Paintable objects must all live in a layer called "Paintable"
 		layerMask = (1 << LayerMask.NameToLayer("Paintable"));
+		// Find the beam object.  It must have the "Beam" tag.
+		foreach (Renderer r in rends) {
+			if (r.gameObject.CompareTag("Beam")) {
+				beamRenderer = r;
+				beamRB = r.gameObject.GetComponent<Rigidbody>();
+				break;
+			}
+		}
+		if (beamRenderer == null) {
+			Debug.Log("StickBehavior did not find a beam object (wrong material set?)");
+		}
 		makeInvisible();
+		makeInactive();
 	}
 
-	// Set whether the GameObject is currently drawing.
-	public void setDrawing(bool d)
+	// Set whether the GameObject is currently active (drawing, pressing buttons, etc)
+	public void setActive(bool d)
 	{
-		isDrawing = d;
+		isActive = d;
+		if (beamRenderer != null) {
+			if (d) {
+				beamRenderer.material = activeBeamMaterial;
+				if (beamRB != null) {
+					beamRB.detectCollisions = true;
+					beamRB.WakeUp();
+				}
+			} else {
+				beamRenderer.material = inactiveBeamMaterial;
+				if (beamRB != null) {
+					beamRB.detectCollisions = false;
+					beamRB.WakeUp();	
+				}
+			}
+		}
 	}
 
-	public void startDrawing()
+	public void makeActive()
 	{
-		setDrawing(true);
+		setActive(true);
 	}
 
-	public void stopDrawing()
+	public void makeInactive()
 	{
-		setDrawing(false);
+		setActive(false);
 	}
 
 	// Set whether the GameObject is currently drilling through paintable
@@ -84,8 +115,7 @@ public class StickBehavior : MonoBehaviour {
         transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
         transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
 
-
-        if (isDrawing) {
+        if (isActive) {
 			if (drill) {
 				PaintAllHits();
 			} else {

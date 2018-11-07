@@ -185,9 +185,9 @@ public class KbMouseControl : MonoBehaviour {
 		}
 		if (mouseMode == MouseMode.Stick) {
 			if (Input.GetKey(KeyCode.LeftShift) || Input.GetMouseButton(0)) {
-				sb.startDrawing();
+				sb.makeActive();
 			} else {
-				sb.stopDrawing();
+				sb.makeInactive();
 			}
 			Vector2 mp = AbsMousePos ();
 			stickHolder.transform.localRotation = stickInitQ * Quaternion.Euler(-0.5f*stickRange*mp.y,0,-0.5f*stickRange*mp.x);

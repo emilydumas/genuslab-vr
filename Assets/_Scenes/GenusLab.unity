@@ -588,7 +588,7 @@ GameObject:
   - component: {fileID: 597199750}
   m_Layer: 0
   m_Name: Toggle
-  m_TagString: Untagged
+  m_TagString: Beam
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -873,8 +873,8 @@ GameObject:
   - component: {fileID: 729538888}
   - component: {fileID: 729538889}
   m_Layer: 2
-  m_Name: Stick
-  m_TagString: Untagged
+  m_Name: Beam
+  m_TagString: Beam
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -907,7 +907,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: eddd420b8ff334cb78038707aea3ba51, type: 2}
+  - {fileID: 2100000, guid: 5606dccaa681e2e4a9ee3c6c71d03e05, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -973,6 +973,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
+  pressed: 0
+  originalColor:
+    r: 0
+    g: 0
+    b: 0
+    a: 0
 --- !u!1001 &895094696
 Prefab:
   m_ObjectHideFlags: 0
@@ -1620,6 +1626,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Controller: 2
   maxDist: Infinity
+  inactiveBeamMaterial: {fileID: 2100000, guid: 5606dccaa681e2e4a9ee3c6c71d03e05,
+    type: 2}
+  activeBeamMaterial: {fileID: 2100000, guid: 48a54195d2d478f4f983eff75def7056, type: 2}
 --- !u!4 &1766946993
 Transform:
   m_ObjectHideFlags: 0

@@ -75,5 +75,5 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PaintUV: {r: 0.2518567, g: 0.15251116, b: 0, a: 0}
+    - _PaintUV: {r: 0.8168311, g: 0.15190876, b: 0, a: 0}
     - _SpotColor: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 0}

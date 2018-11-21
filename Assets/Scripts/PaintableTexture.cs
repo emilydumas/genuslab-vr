@@ -91,6 +91,19 @@ public class PaintableTexture : MonoBehaviour {
                     paintMaterials[go] = null;
                 }
             }
+
+            // It is possible that the object we're inspecting has a ssoitControl script attached,
+            // but Start() has not run on that script, so the SSOIT material hasn't been applied
+            // yet.  That means we would miss a place where we should apply the RenderTexture.
+            // To fix this, we manually check for such a script, and if necessary, set the main
+            // texture on its ssoitMaterial to the RenderTexture.
+            // TODO: Find a better solution to this race condition.
+            ssoitControl SC = go.GetComponent<ssoitControl>();
+            if (SC != null) {
+                if (SC.ssoitMaterial.GetTexture(mainTexturePropertyID) == t) {
+                    SC.ssoitMaterial.SetTexture(mainTexturePropertyID,rt);
+                }
+            }
         }
     }
     public void PaintUV(GameObject obj, Vector2 uv) {

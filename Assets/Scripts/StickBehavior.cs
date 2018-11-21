@@ -21,6 +21,7 @@ public class StickBehavior : MonoBehaviour
     private bool isVisible = false;
     private bool drill = false; // not supported yet
     private OVRGrabbable gb;
+    private LaserOnOff laser;
     private PaintableTexture pt;
     private LayerMask layerMask = Physics.DefaultRaycastLayers;
 
@@ -94,14 +95,12 @@ public class StickBehavior : MonoBehaviour
 
     void Update()
     {
+        
+        OVRInput.Update();
         //Keeping as legacy from laser pointer as hand
-        //OVRInput.Update();
         //transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
         //transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
-
-        //if (gb.isGrabbed())
-      //  {
-            if (isDrawing)
+        if (isDrawing)
             {
                 if (drill)
                 {
@@ -109,7 +108,7 @@ public class StickBehavior : MonoBehaviour
                 }
                 else
                 {
-                    //              PaintFirstHit();
+                    //PaintFirstHit();
                     PaintWithInterpolation();
                 }
             }
@@ -120,7 +119,6 @@ public class StickBehavior : MonoBehaviour
                 this.lastPosition = transform.position;
                 this.lastDirection = transform.TransformDirection(Vector3.up);
             }
-       // }
         
     }
 
@@ -138,7 +136,9 @@ public class StickBehavior : MonoBehaviour
 
     void PaintWithInterpolation()
     {
-        int numsteps = 10;  // fixme!
+        //threshold for where linear interpolation doesn't affect performance.
+        //Still see some spotting if drawing on edges of the H2View
+        float maxStep = 0.1f;
 
         if (HaveLastPosition())
         {
@@ -147,12 +147,12 @@ public class StickBehavior : MonoBehaviour
             float spaceDist = Vector3.Distance(lastPosition, transform.position);
             float angleDist = Vector3.Angle(lastDirection, curDirection);
 
-            // numsteps =  ceiling(spaceDist + angleDist) / maxstep;
+            float numSteps = Mathf.Ceil((spaceDist + angleDist) / maxStep);
 
-            for (int j = 1; j <= numsteps; j++)
+            for (int j = 1; j <= numSteps; j++)
             {
-                var pos = Vector3.Lerp(lastPosition, transform.position, (float)j / (float)numsteps);
-                var dir = Vector3.Slerp(lastDirection, curDirection, (float)j / (float)numsteps);
+                var pos = Vector3.Lerp(lastPosition, transform.position, (float)j / (float)numSteps);
+                var dir = Vector3.Slerp(lastDirection, curDirection, (float)j / (float)numSteps);
                 PaintRay(pos, dir);
             }
         } else {
@@ -167,7 +167,7 @@ public class StickBehavior : MonoBehaviour
         // Cast a ray in direction "up", deteremine what paintable is first hit.
         if (Physics.Raycast(pos, dir, out hit, maxDist, layerMask))
         {
-            Debug.Log("hit!");
+
             GameObject g = hit.transform.gameObject;
 
             if (pt != null)

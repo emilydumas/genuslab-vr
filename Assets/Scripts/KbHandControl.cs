@@ -11,7 +11,9 @@ public class KbHandControl : MonoBehaviour {
     public GameObject surface;
     public GameObject helpScreenParent;
     public GameObject h2view;
+    public GameObject laserPointer;
     public float h2speed = 3f;
+    private LaserOnOff laser;
     private StickBehavior sb;
     private h2viewcontrol h2c;
     private Quaternion stickInitQ, cameraInitQ, surfaceInitQ;
@@ -26,8 +28,10 @@ public class KbHandControl : MonoBehaviour {
         pt = PaintableTexture.Instance;
         // Todo: replace below with singletons to avoid need for linking in the editor
         sb = stickHolder.GetComponent<StickBehavior>();
-        helpScreen = helpScreenParent.GetComponent<HelpScreen>();
+   //     helpScreen = helpScreenParent.GetComponent<HelpScreen>();
         h2c = h2view.GetComponent<h2viewcontrol>();
+        laser = laserPointer.GetComponent<LaserOnOff>();
+        laser.turnOff();
         stickInitQ = stickHolder.transform.localRotation;
         cameraInitQ = camera.transform.localRotation;
         surfaceInitQ = surface.transform.localRotation;
@@ -67,6 +71,11 @@ public class KbHandControl : MonoBehaviour {
             sb.makeVisible();
         }
 
+        if (OVRInput.GetDown(OVRInput.RawButton.RThumbstick))
+        {
+            laser.OnOff();
+        }
+
         if (OVRInput.GetDown(OVRInput.RawButton.A))
         {
             // Clear all drawing on the PaintableTexture
@@ -79,15 +88,18 @@ public class KbHandControl : MonoBehaviour {
             h2c.Toggle();
             h2c.ExportMode();
         }
-
-        if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
+        if (laser.isLaserOn())
         {
+            if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
+            {
+                laser.drawColor();
                 sb.startDrawing();
-            
-        }
-        else if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
-        {
-            sb.stopDrawing();
+            }
+            else if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
+            {
+                laser.turnOn();
+                sb.stopDrawing();
+            }
         }
     }
 }

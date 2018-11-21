@@ -10,9 +10,7 @@ public class KbHandControl : MonoBehaviour {
     public GameObject stickHolder;
     public GameObject surface;
     public GameObject h2view;
-    public GameObject laserPointer;
     public float h2speed = 3f;
-    private LaserOnOff laser;
     private StickBehavior sb;
     private h2viewcontrol h2c;
     private Quaternion stickInitQ, cameraInitQ, surfaceInitQ;
@@ -28,8 +26,6 @@ public class KbHandControl : MonoBehaviour {
         // Todo: replace below with singletons to avoid need for linking in the editor
         sb = stickHolder.GetComponent<StickBehavior>();
         h2c = h2view.GetComponent<h2viewcontrol>();
-        laser = laserPointer.GetComponent<LaserOnOff>();
-        laser.turnOff();
         stickInitQ = stickHolder.transform.localRotation;
         cameraInitQ = camera.transform.localRotation;
         surfaceInitQ = surface.transform.localRotation;
@@ -57,6 +53,7 @@ public class KbHandControl : MonoBehaviour {
     void Update()
     {
         float dt = Time.deltaTime;
+
         // CTRL-Q on keyboard quits the application
         // (We expect that quit will sometimes be done after headset removal.)
         // TODO: Make a good way to quit from within VR scene.
@@ -69,12 +66,17 @@ public class KbHandControl : MonoBehaviour {
             sb.makeVisible();
         }
 
-        if (OVRInput.GetDown(OVRInput.RawButton.RThumbstick))
+        if (OVRInput.GetDown(OVRInput.RawButton.A) || Input.GetKeyDown(KeyCode.Y))
         {
-            laser.OnOff();
+            pt.NextTexture();
         }
 
-        if (OVRInput.GetDown(OVRInput.RawButton.A))
+        if (OVRInput.GetDown(OVRInput.RawButton.B) || Input.GetKeyDown(KeyCode.H))
+        {
+            pt.PreviousTexture();
+        }
+
+        if (OVRInput.GetDown(OVRInput.RawButton.X))
         {
             pt.Clear();
         }
@@ -85,6 +87,7 @@ public class KbHandControl : MonoBehaviour {
             h2c.Toggle();
             h2c.ExportMode();
         }
+
         if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
         {
             sb.makeActive();

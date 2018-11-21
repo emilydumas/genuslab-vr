@@ -11,9 +11,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StickBehavior : MonoBehaviour
-{
-    
+public class StickBehavior : MonoBehaviour {
+
     public OVRInput.Controller Controller;
 	public float maxDist = Mathf.Infinity;
 	public Material inactiveBeamMaterial;
@@ -26,10 +25,8 @@ public class StickBehavior : MonoBehaviour
 	private bool drill = false; // not supported yet
 	private PaintableTexture pt;
 	private LayerMask layerMask = Physics.DefaultRaycastLayers;
-    private Vector3 lastDirection;
-    private Vector3 lastPosition = new Vector3(float.NaN, float.NaN, float.NaN);
-
-    void Start () {
+	
+	void Start () {
 		rends = gameObject.GetComponentsInChildren<Renderer>();
 		// Retrieve the one and only instance of PaintableTexture (singleton pattern)
         pt = PaintableTexture.Instance;
@@ -88,41 +85,11 @@ public class StickBehavior : MonoBehaviour
 		drill = d;
 	}
 
-   // Set whether the GameObject is currently drawing.
-    public void setDrawing(bool d)
-    {
-        isDrawing = d;
-    }
-
-    public void startDrawing()
-    {
-        setDrawing(true);
-    }
-
-    public void stopDrawing()
-    {
-        setDrawing(false);
-        lastPosition = new Vector3(float.NaN, float.NaN, float.NaN);
-    }
-
-    public bool drawing()
-    {
-        return isDrawing;
-    }
-
-    // Set whether the GameObject is currently drilling through paintable
-    // objects.  NOT CURRENTLY IMPLEMENTED.
-    public void setDrill(bool d)
-    {
-        drill = d;
-    }
-
-    // Make GameObject and its children visible or invisible.
-    public void setVisibility(bool b)
-    {
-        isVisible = b;
-        foreach (Renderer r in rends)
-        {
+	// Make GameObject and its children visible or invisible.
+	public void setVisibility(bool b)
+	{	
+		isVisible = b;
+		foreach (Renderer r in rends) {
             r.enabled = b;
         }
     }
@@ -132,108 +99,50 @@ public class StickBehavior : MonoBehaviour
         return isVisible;
     }
 
-    public void makeInvisible()
-    {
-        setVisibility(false);
+	public void makeInvisible()
+	{
+		setVisibility(false);
     }
 
-    public void makeVisible()
-    {
-        setVisibility(true);
-    }
+	public void makeVisible() {
+		setVisibility(true);
+	}
 
+	void Update () {
 
-    void Update()
-    {
-        
         OVRInput.Update();
-        //Keeping as legacy from laser pointer as hand
-        //transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
-        //transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
-        if (isDrawing)
-            {
-                if (drill)
-                {
-                    PaintAllHits();
-                }
-                else
-                {
-                    //PaintFirstHit();
-                    PaintWithInterpolation();
-                }
-            }
 
-            //checks if we were drawing in the previous scene
-            if (isDrawing)
-            {
-                this.lastPosition = transform.position;
-                this.lastDirection = transform.TransformDirection(Vector3.up);
-            }
-        
-    }
+        transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
+        transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
 
-    void PaintAllHits()
-    {
-        Debug.Log("PAINTING ALL HITS NOT IMPLEMENTED.");
-        PaintFirstHit();
-    }
+        if (isActive) {
+			if (drill) {
+				PaintAllHits();
+			} else {
+				PaintFirstHit();
+			}
+		}
+	}
 
+	void PaintAllHits() {
+		Debug.Log("PAINTING ALL HITS NOT IMPLEMENTED.");
+		PaintFirstHit();
+	}
 
-    bool HaveLastPosition()
-    {
-        return !(float.IsNaN(lastPosition.x) || float.IsNaN(lastPosition.y) || float.IsNaN(lastPosition.z));
-    }
-
-    void PaintWithInterpolation()
-    {
-        //threshold for where linear interpolation doesn't affect performance.
-        //Still see some spotting if drawing on edges of the H2View
-        float maxStep = 0.1f;
-
-        if (HaveLastPosition())
-        {
-            Vector3 curDirection = transform.TransformDirection(Vector3.up);
-
-            float spaceDist = Vector3.Distance(lastPosition, transform.position);
-            float angleDist = Vector3.Angle(lastDirection, curDirection);
-
-            float numSteps = Mathf.Ceil((spaceDist + angleDist) / maxStep);
-
-            for (int j = 1; j <= numSteps; j++)
-            {
-                var pos = Vector3.Lerp(lastPosition, transform.position, (float)j / (float)numSteps);
-                var dir = Vector3.Slerp(lastDirection, curDirection, (float)j / (float)numSteps);
-                PaintRay(pos, dir);
-            }
-        } else {
-            PaintFirstHit();
-        }
-    }
-
-    void PaintRay(Vector3 pos, Vector3 dir)
-    {
+    void PaintFirstHit() {
+		// Local "up"
+        var raydir = transform.TransformDirection(Vector3.up);
         RaycastHit hit;
 
-        // Cast a ray in direction "up", deteremine what paintable is first hit.
-        if (Physics.Raycast(pos, dir, out hit, maxDist, layerMask))
-        {
+		// Cast a ray in direction "up", deteremine what paintable is first hit.
+        if (Physics.Raycast (transform.position, raydir, out hit, maxDist, layerMask)) {
+			GameObject g = hit.transform.gameObject;
 
-            GameObject g = hit.transform.gameObject;
-
-            if (pt != null)
-            {
-                // Paint on the shared PaintableTexture at the (u,v) coordinates
-                // of the point where the ray met the object.
-                pt.PaintUV(g, hit.textureCoord);
-            }
-        }
-    }
-
-    void PaintFirstHit()
-    {
-        // Local "up"
-        var raydir = transform.TransformDirection(Vector3.up);
-        PaintRay(transform.position, raydir);
-    }
-
+            if (pt != null) {
+				// Paint on the shared PaintableTexture at the (u,v) coordinates
+				// of the point where the ray met the object.
+				pt.PaintUV (g, hit.textureCoord);
+			}
+		}
+	}
 }

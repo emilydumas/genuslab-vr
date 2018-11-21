@@ -201,7 +201,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &217286088
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1014,7 +1014,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1063684167
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1258,7 +1258,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1261486697
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1536,7 +1536,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1722011099
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1665,11 +1665,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a390fcab65b957849b4a280c0e183a7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  texpreviews:
-  - {fileID: 1063684166}
-  - {fileID: 217286087}
-  - {fileID: 1261486696}
-  - {fileID: 1722011098}
+  texpreviews: []
   depthmat: {fileID: 2100000, guid: f43523955ad9ba442aca5cd91eba6997, type: 2}
   ssoitMaterial: {fileID: 2100000, guid: c0225daee7ecc774f984793527ba9fcc, type: 2}
 --- !u!114 &1838378362

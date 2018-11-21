@@ -101,7 +101,9 @@ public class PaintableTexture : MonoBehaviour {
             ssoitControl SC = go.GetComponent<ssoitControl>();
             if (SC != null) {
                 if (SC.ssoitMaterial.GetTexture(mainTexturePropertyID) == t) {
-                    SC.ssoitMaterial.SetTexture(mainTexturePropertyID,rt);
+                    Material mcopy = new Material(SC.ssoitMaterial);
+                    mcopy.SetTexture(mainTexturePropertyID,rt);
+                    SC.ssoitMaterial = mcopy;
                 }
             }
         }

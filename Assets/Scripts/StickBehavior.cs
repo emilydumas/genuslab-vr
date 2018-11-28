@@ -25,6 +25,7 @@ public class StickBehavior : MonoBehaviour
     private PaintableTexture pt;
     private LayerMask layerMask = Physics.DefaultRaycastLayers;
     private LayerMask colorMask = Physics.DefaultRaycastLayers;
+    private LayerMask textureColorMask = Physics.DefaultRaycastLayers;
     
 
 
@@ -39,6 +40,7 @@ public class StickBehavior : MonoBehaviour
         // Paintable objects must all live in a layer called "Paintable"
         layerMask = (1 << LayerMask.NameToLayer("Paintable"));
         colorMask = (1 << LayerMask.NameToLayer("Color"));
+        textureColorMask = (1 << LayerMask.NameToLayer("TextureColor"));
         if (OVRInput.IsControllerConnected(OVRInput.Controller.RTouch))
             setVR();
         else
@@ -173,7 +175,12 @@ public class StickBehavior : MonoBehaviour
 
     void PaintWithInterpolation()
     {
-        int numsteps = 10;  // fixme!
+        int numSteps = 0;
+
+        // fixme! 0.1f is GREAT on the MCL computer, the Titan X. 
+        // My laptop's GT 1030 doesn't hold up with erratic movement
+        // Find a happy medium
+        float maxStep = 0.4f;   
 
         if (HaveLastPosition())
         {
@@ -182,12 +189,12 @@ public class StickBehavior : MonoBehaviour
             float spaceDist = Vector3.Distance(lastPosition, transform.position);
             float angleDist = Vector3.Angle(lastDirection, curDirection);
 
-            // numsteps =  ceiling(spaceDist + angleDist) / maxstep;
+            numSteps =  Mathf.CeilToInt((spaceDist + angleDist) / maxStep);
 
-            for (int j = 1; j <= numsteps; j++)
+            for (int j = 1; j <= numSteps; j++)
             {
-                var pos = Vector3.Lerp(lastPosition, transform.position, (float)j / (float)numsteps);
-                var dir = Vector3.Slerp(lastDirection, curDirection, (float)j / (float)numsteps);
+                var pos = Vector3.Lerp(lastPosition, transform.position, (float)j / (float)numSteps);
+                var dir = Vector3.Slerp(lastDirection, curDirection, (float)j / (float)numSteps);
                 PaintRay(pos, dir);
             }
         } else {
@@ -225,8 +232,10 @@ public class StickBehavior : MonoBehaviour
     {
         RaycastHit hit;
         var raydir = transform.TransformDirection(Vector3.up);
-        if (Physics.Raycast(transform.localPosition, raydir, out hit, maxDist, colorMask))
+        if (Physics.Raycast(transform.position, raydir, out hit, maxDist, colorMask))
         {
+
+            Debug.Log("COLOR");
             GameObject g = hit.transform.gameObject;
 
             Color c = new Color();
@@ -235,6 +244,30 @@ public class StickBehavior : MonoBehaviour
             pt.SetDrawingColor(c);
           
         }
+        if (Physics.Raycast(transform.position, raydir, out hit, maxDist, textureColorMask))
+        {
+
+            Debug.Log("TEXTURECOLOR");
+            
+            Texture2D tex = hit.transform.GetComponent<Renderer>().material.mainTexture as Texture2D;
+            Vector2 uvCoord = hit.textureCoord;
+
+            // Allowing the uv Coordinates to work with the texture.
+            uvCoord.x *= tex.width;
+            uvCoord.y *= tex.height;
+           
+
+            Color c = new Color();
+
+            // GetPixelBilinear SHOULD work without casting, 
+            // but it creates odd color approximations.
+            // Stick with GetPixel
+            c = tex.GetPixel((int)uvCoord.x, (int)uvCoord.y);       
+
+            pt.SetDrawingColor(c);
+
+        }
+
     }
 
 }

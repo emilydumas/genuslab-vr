@@ -110,8 +110,9 @@ public class PaintableTexture : MonoBehaviour {
 		Graphics.Blit(target,rt);
 	}
 
-    public void SetDrawingColor(Color paintColor)
+    public void SetDrawingColor(Color newColor)
     {
-        this.paintColor = paintColor;
+        paintColor = newColor;
+
     }
 }

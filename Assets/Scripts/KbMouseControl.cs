@@ -188,12 +188,11 @@ public class KbMouseControl : MonoBehaviour {
         {
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetMouseButton(0))
             {
-                sb.findColor();
+                sb.setColor();
                 sb.startDrawing();
             }
             else
             {
-                sb.stopColorSearch();
                 sb.stopDrawing();
             }
        

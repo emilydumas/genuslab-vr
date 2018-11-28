@@ -18,7 +18,6 @@ public class StickBehavior : MonoBehaviour
     public float maxDist = Mathf.Infinity;
     private Renderer[] rends;
     private bool isVR;
-    private bool checkColor = false;
     private bool isDrawing = false;
     private bool isVisible = false;
     private bool drill = false; // not supported yet
@@ -112,16 +111,6 @@ public class StickBehavior : MonoBehaviour
         isVR = false;
     }
 
-    public void findColor()
-    {
-        checkColor = true;
-    }
-
-    public void stopColorSearch()
-    {
-        checkColor = false;
-    }
-
     void Update()
     {
 
@@ -135,11 +124,6 @@ public class StickBehavior : MonoBehaviour
         }
 
         
-        if (checkColor)
-        {
-            setColor();
-        }
-
         if (isDrawing)
             {
             if (drill)
@@ -209,7 +193,6 @@ public class StickBehavior : MonoBehaviour
         // Cast a ray in direction "up", deteremine what paintable is first hit.
         if (Physics.Raycast(pos, dir, out hit, maxDist, layerMask))
         {
-            Debug.Log("hit!");
             GameObject g = hit.transform.gameObject;
 
             if (pt != null)
@@ -235,11 +218,9 @@ public class StickBehavior : MonoBehaviour
         if (Physics.Raycast(transform.position, raydir, out hit, maxDist, colorMask))
         {
 
-            Debug.Log("COLOR");
             GameObject g = hit.transform.gameObject;
 
-            Color c = new Color();
-            c = g.GetComponent<Renderer>().material.color;
+            Color c = g.GetComponent<Renderer>().material.color;
 
             pt.SetDrawingColor(c);
           
@@ -247,22 +228,18 @@ public class StickBehavior : MonoBehaviour
         if (Physics.Raycast(transform.position, raydir, out hit, maxDist, textureColorMask))
         {
 
-            Debug.Log("TEXTURECOLOR");
-            
-            Texture2D tex = hit.transform.GetComponent<Renderer>().material.mainTexture as Texture2D;
+
+            Texture2D tex = hit.transform.GetComponent<MeshRenderer>().material.mainTexture as Texture2D;
             Vector2 uvCoord = hit.textureCoord;
 
-            // Allowing the uv Coordinates to work with the texture.
+            // converting world coordinates to corresponding coordinates on the texture
             uvCoord.x *= tex.width;
             uvCoord.y *= tex.height;
-           
-
-            Color c = new Color();
 
             // GetPixelBilinear SHOULD work without casting, 
-            // but it creates odd color approximations.
+            // but it is weirdly inconsistent?
             // Stick with GetPixel
-            c = tex.GetPixel((int)uvCoord.x, (int)uvCoord.y);       
+            Color c = tex.GetPixel((int)uvCoord.x, (int)uvCoord.y);  
 
             pt.SetDrawingColor(c);
 

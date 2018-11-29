@@ -26,9 +26,7 @@ public class KbHandControl : MonoBehaviour {
     void Start()
     {
         pt = PaintableTexture.Instance;
-        // Todo: replace below with singletons to avoid need for linking in the editor
         sb = stickHolder.GetComponent<StickBehavior>();
-   //     helpScreen = helpScreenParent.GetComponent<HelpScreen>();
         h2c = h2view.GetComponent<h2viewcontrol>();
         laser = laserPointer.GetComponent<LaserOnOff>();
         laser.turnOff();
@@ -73,7 +71,8 @@ public class KbHandControl : MonoBehaviour {
 
         if (OVRInput.GetDown(OVRInput.RawButton.RThumbstick))
         {
-            laser.OnOff();
+            if (sb.isGrabbed())
+                laser.OnOff();
         }
 
         if (OVRInput.GetDown(OVRInput.RawButton.A))
@@ -90,15 +89,19 @@ public class KbHandControl : MonoBehaviour {
         }
         if (laser.isLaserOn())
         {
-            if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
+            if (sb.isGrabbed())
             {
-                laser.drawColor();
-                sb.startDrawing();
-            }
-            else if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
-            {
-                laser.turnOn();
-                sb.stopDrawing();
+                if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
+                {
+                    laser.drawColor();
+                    sb.setColor();
+                    sb.startDrawing();
+                }
+                else if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
+                {
+                    laser.turnOn();
+                    sb.stopDrawing();
+                }
             }
         }
     }

@@ -15,26 +15,35 @@ public class StickBehavior : MonoBehaviour
 {
     
     public OVRInput.Controller Controller;
+    public OVRGrabbable gb;
+    public GameObject laserPointer;
     public float maxDist = Mathf.Infinity;
     private Renderer[] rends;
     private bool isDrawing = false;
     private bool isVisible = false;
     private bool drill = false; // not supported yet
-    private OVRGrabbable gb;
+    private Vector3 respawn;
     private LaserOnOff laser;
     private PaintableTexture pt;
     private LayerMask layerMask = Physics.DefaultRaycastLayers;
+    private LayerMask colorMask = Physics.DefaultRaycastLayers;
+    private LayerMask textureColorMask = Physics.DefaultRaycastLayers;
 
     private Vector3 lastDirection;
     private Vector3 lastPosition = new Vector3(float.NaN,float.NaN,float.NaN);
 
     void Start()
     {
+        respawn = new Vector3(-0.71f, 0.25f, -7.09f);
         rends = gameObject.GetComponentsInChildren<Renderer>();
         // Retrieve the one and only instance of PaintableTexture (singleton pattern)
         pt = PaintableTexture.Instance;
+        laser = laserPointer.GetComponent<LaserOnOff>();
+
         // Paintable objects must all live in a layer called "Paintable"
         layerMask = (1 << LayerMask.NameToLayer("Paintable"));
+        colorMask = (1 << LayerMask.NameToLayer("Color"));
+        textureColorMask = (1 << LayerMask.NameToLayer("TextureColor"));
         makeInvisible();
     }
 
@@ -92,15 +101,38 @@ public class StickBehavior : MonoBehaviour
         setVisibility(true);
     }
 
+    public bool isGrabbed()
+    {
+        return gb.isGrabbed;
+    }
+
 
     void Update()
     {
+
+        if (transform.position.y < -2.6f)
+        {
+            Rigidbody body = gameObject.GetComponent<Rigidbody>();
+            body.isKinematic = true;
+            transform.position = respawn;
+            body.isKinematic = false;
+            laser.turnOff();
+        }
         
         OVRInput.Update();
         //Keeping as legacy from laser pointer as hand
         //transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
         //transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
-        if (isDrawing)
+
+        if (gb.isGrabbed == true)
+        { 
+            // DO NOT CHANGE 
+            // The way the laser pointer was made turned the 'snap;
+            Vector3 thing = new Vector3(-0.58f, 0.96f, -7.76f);
+            transform.localPosition = OVRInput.GetLocalControllerPosition(Controller) + thing;
+            transform.localRotation = OVRInput.GetLocalControllerRotation(Controller);
+            transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
+            if (isDrawing)
             {
                 if (drill)
                 {
@@ -119,6 +151,7 @@ public class StickBehavior : MonoBehaviour
                 this.lastPosition = transform.position;
                 this.lastDirection = transform.TransformDirection(Vector3.up);
             }
+        }
         
     }
 
@@ -138,7 +171,7 @@ public class StickBehavior : MonoBehaviour
     {
         //threshold for where linear interpolation doesn't affect performance.
         //Still see some spotting if drawing on edges of the H2View
-        float maxStep = 0.1f;
+        float maxStep = 0.2f;
 
         if (HaveLastPosition())
         {
@@ -184,6 +217,42 @@ public class StickBehavior : MonoBehaviour
         // Local "up"
         var raydir = transform.TransformDirection(Vector3.up);
         PaintRay(transform.position, raydir);
+    }
+
+    public void setColor()
+    {
+        RaycastHit hit;
+        var raydir = transform.TransformDirection(Vector3.up);
+        if (Physics.Raycast(transform.position, raydir, out hit, maxDist, colorMask))
+        {
+
+            GameObject g = hit.transform.gameObject;
+
+            Color c = g.GetComponent<Renderer>().material.color;
+
+            pt.SetDrawingColor(c);
+
+        }
+        if (Physics.Raycast(transform.position, raydir, out hit, maxDist, textureColorMask))
+        {
+
+
+            Texture2D tex = hit.transform.GetComponent<MeshRenderer>().material.mainTexture as Texture2D;
+            Vector2 uvCoord = hit.textureCoord;
+
+            // converting world coordinates to corresponding coordinates on the texture
+            uvCoord.x *= tex.width;
+            uvCoord.y *= tex.height;
+
+            // GetPixelBilinear SHOULD work without casting, 
+            // but it is weirdly inconsistent?
+            // Stick with GetPixel
+            Color c = tex.GetPixel((int)uvCoord.x, (int)uvCoord.y);
+
+            pt.SetDrawingColor(c);
+
+        }
+
     }
 
 }

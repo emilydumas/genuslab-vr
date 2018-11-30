@@ -1,4 +1,4 @@
-﻿// Singleton that makes a RenderTexture copy of a given texture, and then tells
+// Singleton that makes a RenderTexture copy of a given texture, and then tells
 // every GameObject using that texture to use the RenderTexture instead.
 
 // Missing feature: There is no support to add new GameObjects using the
@@ -98,6 +98,20 @@ public class PaintableTexture : MonoBehaviour {
                 }
             }
         }
+        // It is possible that the object we're inspecting has a ssoitControl script attached,
+            // but Start() has not run on that script, so the SSOIT material hasn't been applied
+            // yet.  That means we would miss a place where we should apply the RenderTexture.
+            // To fix this, we manually check for such a script, and if necessary, set the main
+            // texture on its ssoitMaterial to the RenderTexture.
+            // TODO: Find a better solution to this race condition.
+        ssoitControl SC = go.GetComponent<ssoitControl>();
+            if (SC != null) {
+                if (SC.ssoitMaterial.GetTexture(mainTexturePropertyID) == t) {
+                    Material mcopy = new Material(SC.ssoitMaterial);
+                    mcopy.SetTexture(mainTexturePropertyID,rt);
+                    SC.ssoitMaterial = mcopy;
+                }
+            }
     }
     public void PaintUV(GameObject obj, Vector2 uv) {
 		// Draw a new spot on the rendertexture at (u,v)
@@ -113,6 +127,8 @@ public class PaintableTexture : MonoBehaviour {
 	}
 
     public void Clear() {
+        Graphics.Blit(target,rt);
+
 		Graphics.Blit(options[currentTextureOption],rt);
 	}
 

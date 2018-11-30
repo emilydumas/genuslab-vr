@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: h2paintmaterial
-  m_Shader: {fileID: 4800000, guid: cb0e8d8c2d1b04e24a8a5730fbcad0d8, type: 3}
+  m_Name: ZSort
+  m_Shader: {fileID: 4800000, guid: 0a3bcd3c389aac140a6dffba569bdca0, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -46,6 +46,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MinDepthTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -66,20 +70,11 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Poincare: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpotSize: 0.0002
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-<<<<<<< HEAD
-    - _PaintUV: {r: 0.5042345, g: 0.51104933, b: 0, a: 0}
-=======
-    - _PaintUV: {r: 0.61420447, g: 0.40993702, b: 0, a: 0}
->>>>>>> burn-through
-    - _PaintXY: {r: -0.38780525, g: -0.1673986, b: 0, a: 0}
-    - _SpotColor: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 0}

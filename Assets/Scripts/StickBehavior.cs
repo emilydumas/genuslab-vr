@@ -1,4 +1,4 @@
-﻿// Make a GameObject into a "marker" or "laser" that can draw on a the
+// Make a GameObject into a "marker" or "laser" that can draw on a the
 // PaintableTexture in the scene.  Marks are drawn where a ray from the
 // GameObject hits something which is paintable.  The ray is in the direction of
 // the object's local "up".
@@ -25,6 +25,7 @@ public class StickBehavior : MonoBehaviour {
 	private bool drill = false; // not supported yet
 	private PaintableTexture pt;
 	private LayerMask layerMask = Physics.DefaultRaycastLayers;
+	private float maxForward = 10.0f;
 	
 	void Start () {
 		rends = gameObject.GetComponentsInChildren<Renderer>();
@@ -32,6 +33,8 @@ public class StickBehavior : MonoBehaviour {
         pt = PaintableTexture.Instance;
 		// Paintable objects must all live in a layer called "Paintable"
 		layerMask = (1 << LayerMask.NameToLayer("Paintable"));
+		if (maxDist < maxForward)
+			maxForward = maxDist;
 		// Find the beam object.  It must have the "Beam" tag.
 		foreach (Renderer r in rends) {
 			if (r.gameObject.CompareTag("Beam")) {
@@ -125,8 +128,35 @@ public class StickBehavior : MonoBehaviour {
 	}
 
 	void PaintAllHits() {
-		Debug.Log("PAINTING ALL HITS NOT IMPLEMENTED.");
-		PaintFirstHit();
+		if (pt == null)
+			return;
+
+        Vector3 raydir = transform.TransformDirection(Vector3.up);
+		Vector3 pos = transform.position;
+        RaycastHit hit;
+		List<Vector3> hitList = new List<Vector3>();
+		GameObject gObject = null;  
+
+	    // Forward pass: record hits (ray enters surface) and paint them
+		while (Physics.Raycast (pos, raydir, out hit, maxDist, layerMask)) {
+			GameObject g = hit.transform.gameObject;
+			gObject = g;
+			pt.PaintUV (g, hit.textureCoord);
+			hitList.Add(hit.point);
+			pos = hit.point + 0.001f*raydir; // move slightly forward of latest hit
+		}
+		
+		// Backward pass: Detect surface exits and paint them
+		if(hitList.Count != 0){
+			Vector3 backHitStart =  hitList[hitList.Count -1] + (maxForward*raydir);
+			hitList.Add(backHitStart);
+			hitList.Reverse();
+			for(int i = 0; i < hitList.Count; i++){
+				if(Physics.Raycast (hitList[i], (-1 * raydir), out hit, maxDist, layerMask)){
+					pt.PaintUV(gObject, hit.textureCoord);
+			 	}
+			}
+		}
 	}
 
     void PaintFirstHit() {

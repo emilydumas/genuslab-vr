@@ -13,27 +13,34 @@ using UnityEngine;
 
 public class StickBehavior : MonoBehaviour
 {
-    
-    public OVRInput.Controller Controller;
-    public OVRGrabbable gb;
+    // Might get rid of due to Alex's implementation
     public GameObject laserPointer;
+    private LaserOnOff laser;
+
+    // Allows for ability to check if item has been grabbed.
+    public OVRGrabbable gb;
+    // Removes issues when throwing causes multiple 'fall-throughs' otherwise a new vector is created every drop
+    private Vector3 respawn;
+
+    public OVRInput.Controller Controller;
+
     public float maxDist = Mathf.Infinity;
     private Renderer[] rends;
     private bool isDrawing = false;
     private bool isVisible = false;
     private bool drill = false; // not supported yet
-    private Vector3 respawn;
-    private LaserOnOff laser;
     private PaintableTexture pt;
     private LayerMask layerMask = Physics.DefaultRaycastLayers;
     private LayerMask colorMask = Physics.DefaultRaycastLayers;
     private LayerMask textureColorMask = Physics.DefaultRaycastLayers;
 
+    // For interpolated drawing
     private Vector3 lastDirection;
-    private Vector3 lastPosition = new Vector3(float.NaN,float.NaN,float.NaN);
+    private Vector3 lastPosition = new Vector3(float.NaN, float.NaN, float.NaN);
 
     void Start()
     {
+        // Exact spot of the tool platform. Will change when we change where the tool platform goes.
         respawn = new Vector3(-0.71f, 0.25f, -7.09f);
         rends = gameObject.GetComponentsInChildren<Renderer>();
         // Retrieve the one and only instance of PaintableTexture (singleton pattern)
@@ -42,7 +49,9 @@ public class StickBehavior : MonoBehaviour
 
         // Paintable objects must all live in a layer called "Paintable"
         layerMask = (1 << LayerMask.NameToLayer("Paintable"));
+        // colorMask is to get the color from a single-colored material
         colorMask = (1 << LayerMask.NameToLayer("Color"));
+        // textureColorMask is for getting a color from a texture
         textureColorMask = (1 << LayerMask.NameToLayer("TextureColor"));
         makeInvisible();
     }
@@ -58,7 +67,7 @@ public class StickBehavior : MonoBehaviour
         setDrawing(true);
     }
 
-    public void stopDrawing()
+    public void stopDrawing()                       // #DIFFERENT
     {
         setDrawing(false);
         lastPosition = new Vector3(float.NaN, float.NaN, float.NaN);
@@ -66,7 +75,7 @@ public class StickBehavior : MonoBehaviour
 
     public bool drawing()
     {
-        return isDrawing;
+        return isDrawing;                     // #DIFFERENT
     }
 
     // Set whether the GameObject is currently drilling through paintable
@@ -106,31 +115,38 @@ public class StickBehavior : MonoBehaviour
         return gb.isGrabbed;
     }
 
+    // Respawns the controller if it falls to the floor.
+    // Quick-and-dirty method that is less prone to bugs than utilizing an onTriggerEnter for the floor
+    public void respawnLaser()
+    {
+        Rigidbody body = gameObject.GetComponent<Rigidbody>();
+        body.isKinematic = true;
+        transform.position = respawn;
+        body.isKinematic = false;
+        laser.turnOff();
+    }
+
 
     void Update()
     {
-
-        if (transform.position.y < -2.6f)
+        // If the laser pointer falls down to a certain point, we respawn it at the original point on the map.
+        if ((transform.position.y < -2.6f) && (!isGrabbed()))
         {
-            Rigidbody body = gameObject.GetComponent<Rigidbody>();
-            body.isKinematic = true;
-            transform.position = respawn;
-            body.isKinematic = false;
-            laser.turnOff();
+            respawnLaser();
         }
-        
-        OVRInput.Update();
-        //Keeping as legacy from laser pointer as hand
-        //transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
-        //transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
 
-        if (gb.isGrabbed == true)
-        { 
+        // Necessary for getting input from the touch controllers
+        OVRInput.Update();
+        // Keeping as legacy from laser pointer as hand
+        // transform.localPosition = OVRInput.GetLocalControllerPosition(Controller);
+        // transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
+
+        if (isGrabbed())
+        {
             // DO NOT CHANGE 
-            // The way the laser pointer was made turned the 'snap;
-            Vector3 thing = new Vector3(-0.58f, 0.96f, -7.76f);
-            transform.localPosition = OVRInput.GetLocalControllerPosition(Controller) + thing;
-            transform.localRotation = OVRInput.GetLocalControllerRotation(Controller);
+            // The way the laser pointer was made doesn't allow for the usual 'snap offset'
+            Vector3 handSnap = new Vector3(-0.58f, 0.96f, -7.76f);
+            transform.localPosition = OVRInput.GetLocalControllerPosition(Controller) + handSnap;
             transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
             if (isDrawing)
             {
@@ -140,19 +156,18 @@ public class StickBehavior : MonoBehaviour
                 }
                 else
                 {
-                    //PaintFirstHit();
                     PaintWithInterpolation();
                 }
             }
 
-            //checks if we were drawing in the previous scene
+            // checks if we were drawing in the previous scene
             if (isDrawing)
             {
                 this.lastPosition = transform.position;
                 this.lastDirection = transform.TransformDirection(Vector3.up);
             }
         }
-        
+
     }
 
     void PaintAllHits()
@@ -188,7 +203,9 @@ public class StickBehavior : MonoBehaviour
                 var dir = Vector3.Slerp(lastDirection, curDirection, (float)j / (float)numSteps);
                 PaintRay(pos, dir);
             }
-        } else {
+        }
+        else
+        {
             PaintFirstHit();
         }
     }
@@ -197,7 +214,7 @@ public class StickBehavior : MonoBehaviour
     {
         RaycastHit hit;
 
-        // Cast a ray in direction "up", deteremine what paintable is first hit.
+        // Cast a ray in direction "up", determine what paintable is first hit.
         if (Physics.Raycast(pos, dir, out hit, maxDist, layerMask))
         {
 
@@ -235,18 +252,14 @@ public class StickBehavior : MonoBehaviour
         }
         if (Physics.Raycast(transform.position, raydir, out hit, maxDist, textureColorMask))
         {
-
-
+            // HAVE to use the texture as a 2D texture for better normalized (u,v) coordinate of texture
             Texture2D tex = hit.transform.GetComponent<MeshRenderer>().material.mainTexture as Texture2D;
             Vector2 uvCoord = hit.textureCoord;
 
-            // converting world coordinates to corresponding coordinates on the texture
+            // normalizing coordinates to the texture
             uvCoord.x *= tex.width;
             uvCoord.y *= tex.height;
 
-            // GetPixelBilinear SHOULD work without casting, 
-            // but it is weirdly inconsistent?
-            // Stick with GetPixel
             Color c = tex.GetPixel((int)uvCoord.x, (int)uvCoord.y);
 
             pt.SetDrawingColor(c);

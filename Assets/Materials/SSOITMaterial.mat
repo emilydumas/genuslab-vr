@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: SSOITMaterial
-  m_Shader: {fileID: 4800000, guid: 5af59a36040289b47b8fe98d88ffab22, type: 3}
+  m_Shader: {fileID: 4800000, guid: e158e8a02c886624398b63aca8478138, type: 3}
   m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0

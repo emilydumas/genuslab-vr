@@ -81,6 +81,12 @@ Shader "Custom/ssoit_surface" {
                 float2 uv_MainTex;
             };
             void surf (Input IN, inout SurfaceOutputStandard o) {
+                //depth testing needs to be done here  instead of the frag shader
+                //so make vert and frag guts here in surf
+                // abort otherwise
+                if (abs(i.eyedepth - target_depth) > _DepthTolerance) {
+                    discard;
+                }
                 o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
                 o.Alpha = tex2D (_MainTex, IN.uv_MainTex).a;
             }

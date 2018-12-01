@@ -141,11 +141,22 @@ public class PaintableTexture : MonoBehaviour {
     public void NextTexture() {
         SetTexture((currentTextureOption + 1) % options.Count);
     }
-    public void PreviousTexture() {
-        if (currentTextureOption > 0) {
+
+    public void PreviousTexture()
+    {
+
+        if (currentTextureOption > 0)
+        {
             SetTexture(currentTextureOption - 1);
-        } else {
-            SetTexture(options.Count-1);
         }
+        else
+        {
+            SetTexture(options.Count - 1);
+        }
+    }
+
+    public void SetDrawingColor(Color newColor)
+    {
+        this.paintColor = newColor;
     }
 }

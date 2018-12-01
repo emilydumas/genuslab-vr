@@ -217,9 +217,7 @@ MonoBehaviour:
   camera: {fileID: 1796281674}
   stickHolder: {fileID: 1766946991}
   surface: {fileID: 175034025}
-  helpScreenParent: {fileID: 0}
   h2view: {fileID: 1675142549}
-  laserPointer: {fileID: 729538883}
   h2speed: 3
 --- !u!4 &300956910
 Transform:
@@ -258,6 +256,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 2800000, guid: 1e3cf0f344468489c8ab12b818efd301, type: 3}
+  options: []
   spotSize: 0.0002
   paintColor: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 1}
 --- !u!1001 &480055777
@@ -348,7 +347,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: 42b97ff508fd2094fbf237673a239263, type: 2}
+  - {fileID: 2100000, guid: 4490f60248559134c8474e28ba955d9d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -449,7 +448,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: 80d38b9ea111be544a803be3beaf2dff, type: 2}
+  - {fileID: 2100000, guid: 2ca314604ec9a0c428dfcccec05388a2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -640,7 +639,6 @@ GameObject:
   - component: {fileID: 729538884}
   - component: {fileID: 729538887}
   - component: {fileID: 729538885}
-  - component: {fileID: 729538886}
   m_Layer: 2
   m_Name: Stick
   m_TagString: Untagged
@@ -696,20 +694,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &729538886
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 729538883}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f92c594a5b2c58a448b47bbc0cf0db3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  laserPink: {fileID: 2100000, guid: eddd420b8ff334cb78038707aea3ba51, type: 2}
-  laserDraw: {fileID: 0}
-  laser: {fileID: 729538883}
 --- !u!33 &729538887
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1013,6 +997,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewMode: 0
+  h2speed: 3
 --- !u!114 &1675142555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1024,7 +1009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8805ee97d078e74dbc620b3a29700b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paintMaterial: {fileID: 2100000, guid: c3c319f4f66a946d1bbe2c7ae0ef283e, type: 2}
+  paintMaterial: {fileID: 2100000, guid: 4e257486ce802344f9dbf7cf39207aaf, type: 2}
 --- !u!1 &1766946991
 GameObject:
   m_ObjectHideFlags: 0
@@ -1033,9 +1018,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1766946993}
-  - component: {fileID: 1766946992}
   - component: {fileID: 1766946994}
   - component: {fileID: 1766946995}
+  - component: {fileID: 1766946992}
   m_Layer: 0
   m_Name: Stick Holder
   m_TagString: Untagged
@@ -1054,10 +1039,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43ee5821d40084e81ae9500d7cbb95b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Controller: 2
   gb: {fileID: 1766946995}
-  laserPointer: {fileID: 729538883}
+  Controller: 2
   maxDist: Infinity
+  inactiveBeamMaterial: {fileID: 2100000, guid: 5606dccaa681e2e4a9ee3c6c71d03e05,
+    type: 2}
+  activeBeamMaterial: {fileID: 2100000, guid: 48a54195d2d478f4f983eff75def7056, type: 2}
 --- !u!4 &1766946993
 Transform:
   m_ObjectHideFlags: 0
@@ -1120,6 +1107,20 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: 72a46496775ba42659b557db9f745859,
     type: 3}
   m_PrefabInternal: {fileID: 895094696}
+--- !u!114 &1838378360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1838378358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a390fcab65b957849b4a280c0e183a7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  texpreviews: []
+  depthmat: {fileID: 2100000, guid: f43523955ad9ba442aca5cd91eba6997, type: 2}
+  ssoitMaterial: {fileID: 2100000, guid: c0225daee7ecc774f984793527ba9fcc, type: 2}
 --- !u!114 &1838378362
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -28,25 +28,23 @@ public class h2viewcontrol : MonoBehaviour {
 
 		PaintData pd = gameObject.GetComponent<PaintData>();
 		pm = pd.paintMaterial;
-		EventHandler.StartListening("ToggleView", Toggle);
-		EventHandler.StartListening("ToggleView", ExportMode);
+		EventHandler.StartListening("ToggleModel", ToggleModel);
 		EventHandler.StartListening("MoveUp", MoveUp);
 		EventHandler.StartListening("MoveDown", MoveDown);
 		EventHandler.StartListening("MoveRight", MoveRight);
 		EventHandler.StartListening("MoveLeft", MoveLeft);
 		EventHandler.StartListening("Reset",ResetPreTransformation);
-		EventHandler.StartListening("Reset", ExportPreTransformation);
 		ExportMode();
-		ExportPreTransformation();
-		
+		ExportPreTransformation();	
 	}
 
-	public void Toggle() {
+	public void ToggleModel() {
 		if (viewMode == ViewMode.Poincare) {
 			viewMode = ViewMode.Klein;
 		} else {
 			viewMode = ViewMode.Poincare;
 		}
+		ExportMode();
 	}
 
 	public void ExportMode() {
@@ -69,6 +67,7 @@ public class h2viewcontrol : MonoBehaviour {
 
 	public void ResetPreTransformation() {
 		SetPreTransformation(Matrix4x4.identity);
+		ExportPreTransformation();
 	}
 
 	public void SetPreTransformation(Matrix4x4 T) {

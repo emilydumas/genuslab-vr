@@ -143,7 +143,7 @@ public class KbMouseControl : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.P)) {
 			// Klein-Poincare toggle
-			h2c.Toggle();
+			h2c.ToggleModel();
 			h2c.ExportMode();
 		}
 

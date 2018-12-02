@@ -6,26 +6,17 @@ public class ButtonDriver : MonoBehaviour {
 
 	public string eventName;
 	public bool continuous;
-
-	void Start(){
-		
-		
-	}
-	// Update is called once per frame
 	
 	void OnTriggerEnter(Collider other)
 	{	
 			if(!continuous){
 				EventHandler.TriggerEvent(eventName);
-			}
-			
-				
+				Debug.Log("Event: "+eventName);
+			}			
 	}	
 	 void OnTriggerStay(Collider other){
 		if(continuous){
 				EventHandler.TriggerEvent(eventName);
 			}
 	}
-	
-
 }

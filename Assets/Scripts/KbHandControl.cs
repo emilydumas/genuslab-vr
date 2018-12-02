@@ -83,7 +83,7 @@ public class KbHandControl : MonoBehaviour {
         if (OVRInput.GetDown(OVRInput.RawButton.Y))
         {
             // Klein-Poincare toggle
-            h2c.Toggle();
+            h2c.ToggleModel();
             h2c.ExportMode();
         }
 

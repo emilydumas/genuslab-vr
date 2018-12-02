@@ -641,7 +641,7 @@ GameObject:
   - component: {fileID: 729538885}
   m_Layer: 2
   m_Name: Stick
-  m_TagString: Untagged
+  m_TagString: Beam
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -674,7 +674,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: eddd420b8ff334cb78038707aea3ba51, type: 2}
+  - {fileID: 2100000, guid: 48a54195d2d478f4f983eff75def7056, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

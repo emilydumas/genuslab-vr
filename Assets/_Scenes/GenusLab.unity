@@ -1028,7 +1028,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8805ee97d078e74dbc620b3a29700b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paintMaterial: {fileID: 2100000, guid: 4e257486ce802344f9dbf7cf39207aaf, type: 2}
+  paintMaterial: {fileID: 2100000, guid: c3c319f4f66a946d1bbe2c7ae0ef283e, type: 2}
 --- !u!1 &1766946991
 GameObject:
   m_ObjectHideFlags: 0

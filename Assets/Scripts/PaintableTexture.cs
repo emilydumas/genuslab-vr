@@ -133,7 +133,7 @@ public class PaintableTexture : MonoBehaviour {
 		// Draw a new spot on the rendertexture at (u,v)
         Material m = paintMaterials[obj];
         RenderTexture buffer = RenderTexture.GetTemporary(rt.width, rt.height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
-                
+
         m.SetVector (spotColorPropertyID, paintColor);
         m.SetFloat (spotSizePropertyID, spotSize);
 		m.SetVector (paintUVPropertyID, new Vector4(uv.x,uv.y,0,0));

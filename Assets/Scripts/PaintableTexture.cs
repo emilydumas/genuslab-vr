@@ -9,11 +9,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 // Based on singleton implementation from https://gamedev.stackexchange.com/questions/116009/in-unity-how-do-i-correctly-implement-the-singleton-pattern
 public class PaintableTexture : MonoBehaviour {
+    #if UNITY_EDITOR
     [SerializeField, Layer] public int targetLayer;
+    #else
+    public int targetLayer;
+    #endif
     public List<Texture> options;
     public float spotSize = 0.001f;
 	public Color paintColor = new Color(0,0,0,1);
@@ -26,6 +33,7 @@ public class PaintableTexture : MonoBehaviour {
     private RenderTexture rt;
     private Dictionary<GameObject,Material> paintMaterials = new Dictionary<GameObject,Material>();
 
+    #if UNITY_EDITOR
     // Next two classes support selection of a layer in the editor
     // Based on https://answers.unity.com/questions/609385/type-for-layer-selection.html
     public class LayerAttribute : PropertyAttribute
@@ -40,6 +48,7 @@ public class PaintableTexture : MonoBehaviour {
             property.intValue = EditorGUI.LayerField(position, label,  property.intValue);
          }
     }
+    #endif
 
     public static PaintableTexture Instance
     {

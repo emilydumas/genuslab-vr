@@ -9,10 +9,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 // Based on singleton implementation from https://gamedev.stackexchange.com/questions/116009/in-unity-how-do-i-correctly-implement-the-singleton-pattern
 public class PaintableTexture : MonoBehaviour {
-    public Texture target;  // Will find anything that uses this, and link it to the shared texture.
+    [SerializeField, Layer] public int targetLayer;
     public List<Texture> options;
     public float spotSize = 0.001f;
 	public Color paintColor = new Color(0,0,0,1);
@@ -24,6 +25,21 @@ public class PaintableTexture : MonoBehaviour {
     private int currentTextureOption = 0;
     private RenderTexture rt;
     private Dictionary<GameObject,Material> paintMaterials = new Dictionary<GameObject,Material>();
+
+    // Next two classes support selection of a layer in the editor
+    // Based on https://answers.unity.com/questions/609385/type-for-layer-selection.html
+    public class LayerAttribute : PropertyAttribute
+    { 
+    }
+
+    [CustomPropertyDrawer(typeof(LayerAttribute))]
+    class LayerAttributeEditor : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            property.intValue = EditorGUI.LayerField(position, label,  property.intValue);
+         }
+    }
 
     public static PaintableTexture Instance
     {
@@ -63,7 +79,7 @@ public class PaintableTexture : MonoBehaviour {
         // is complete and this results in Graphics.Blit() writing black pixels
         // to the RenderTexture.  Moving this initialization to Start() fixed
         // that problem.
-        ReplaceTextureWithRenderTexture(target);
+        ReplaceTextureWithRenderTexture(options[currentTextureOption]);
         EventHandler.StartListening("Clear", Clear); 
         EventHandler.StartListening("Toggle", NextTexture); 
         Clear();
@@ -78,24 +94,25 @@ public class PaintableTexture : MonoBehaviour {
         GameObject[] gos = FindObjectsOfType(typeof(GameObject)) as GameObject[];
         foreach (GameObject go in gos)
         {
-            Renderer rend = go.GetComponent<Renderer>(); 
-            if (rend == null)
-            {
+            if (go.layer != targetLayer) {
+                // Object is not in right layer; ignore.
                 continue;
             }
-            if (rend.sharedMaterial.mainTexture == t)
-            {
-                Debug.Log("Setting " + go.name + " to use shared RenderTexture");
-				Material mcopy = rend.material;  // Generates a copy.
-				mcopy.SetTexture(mainTexturePropertyID, rt);
-                PaintData pd = go.GetComponent<PaintData>();
-                if (pd != null ) {
-                    // We duplicate the paintMaterial specified in the scene so that
-                    // changes to its properties (as in PaintUV) do not get written to disk.
-                    paintMaterials[go] = new Material(pd.paintMaterial);
-                } else {
+            Renderer rend = go.GetComponent<Renderer>(); 
+            if (rend == null) {
+                Debug.LogWarning("Object in target layer of PaintableTexture has no renderer: " + go.name);
+                continue;
+            }
+            Debug.Log("Setting " + go.name + " to use shared RenderTexture");
+			Material mcopy = rend.material;  // Generates a copy.
+			mcopy.SetTexture(mainTexturePropertyID, rt);
+            PaintData pd = go.GetComponent<PaintData>();
+            if (pd != null ) {
+                // We duplicate the paintMaterial specified in the scene so that
+                // changes to its properties (as in PaintUV) do not get written to disk.
+                paintMaterials[go] = new Material(pd.paintMaterial);
+            } else {
                     paintMaterials[go] = null;
-                }
             }
             // It is possible that the object we're inspecting has a ssoitControl script attached,
             // but Start() has not run on that script, so the SSOIT material hasn't been applied
@@ -104,13 +121,12 @@ public class PaintableTexture : MonoBehaviour {
             // texture on its ssoitMaterial to the RenderTexture.
             // TODO: Find a better solution to this race condition.
             ssoitControl SC = go.GetComponent<ssoitControl>();
-                if (SC != null) {
-                    if (SC.ssoitMaterial.GetTexture(mainTexturePropertyID) == t) {
-                        Material mcopy = new Material(SC.ssoitMaterial);
-                        mcopy.SetTexture(mainTexturePropertyID,rt);
-                        SC.ssoitMaterial = mcopy;
-                    }
-                }
+            if (SC != null) {
+                Debug.Log("Object "+go.name+" has SSIOT control attached; setting it to use RenderTexture");
+                mcopy = new Material(SC.ssoitMaterial);
+                mcopy.SetTexture(mainTexturePropertyID,rt);
+                SC.ssoitMaterial = mcopy;
+            }
         }
     }
     public void PaintUV(GameObject obj, Vector2 uv) {
@@ -127,9 +143,7 @@ public class PaintableTexture : MonoBehaviour {
 	}
 
     public void Clear() {
-        Graphics.Blit(target,rt);
-
-		//Graphics.Blit(options[currentTextureOption],rt);
+		Graphics.Blit(options[currentTextureOption],rt);
 	}
 
     public void SetTexture(int idx) {

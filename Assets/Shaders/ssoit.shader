@@ -12,7 +12,7 @@ Shader "ssoit" {
         Tags {"Queue" = "Transparent" "RenderType"="Transparent" }
         Cull off
         Blend SrcAlpha OneMinusSrcAlpha
-        ZWrite off
+        ZWrite on
         ZTest LEqual
         Pass {
             CGPROGRAM

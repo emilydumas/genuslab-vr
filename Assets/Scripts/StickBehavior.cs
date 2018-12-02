@@ -91,6 +91,9 @@ public class StickBehavior : MonoBehaviour {
 				}
 			}
 		}
+        if (!d) {
+            lastPosition = new Vector3(float.NaN, float.NaN, float.NaN);
+        }
 	}
 
 	public void makeActive()

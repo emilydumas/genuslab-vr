@@ -138,7 +138,10 @@ public class StickBehavior : MonoBehaviour {
 
     public bool isGrabbed()
     {
-        return gb.isGrabbed;
+        if (gb != null)
+            return gb.isGrabbed;
+        else
+            return true;  // If OVR grabbing not present, we assume it is always in hand.
     }
 
     // Respawns the controller if it falls to the floor.
@@ -184,6 +187,13 @@ public class StickBehavior : MonoBehaviour {
             {
                 this.lastPosition = transform.position;
                 this.lastDirection = transform.TransformDirection(Vector3.up);
+            }
+        }
+
+        if (isActive) {
+            if (!isGrabbed()) {
+                // Beam was on when grabbing stopped; turn it off.
+                makeInactive();
             }
         }
 

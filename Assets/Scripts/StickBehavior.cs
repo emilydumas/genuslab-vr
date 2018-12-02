@@ -298,6 +298,7 @@ public class StickBehavior : MonoBehaviour {
 
     public void setColor()
     {
+        Debug.Log("SetColor called");
         RaycastHit hit;
         var raydir = transform.TransformDirection(Vector3.up);
         if (Physics.Raycast(transform.position, raydir, out hit, maxDist, colorMask))

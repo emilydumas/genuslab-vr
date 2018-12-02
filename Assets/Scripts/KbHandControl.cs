@@ -73,8 +73,6 @@ public class KbHandControl : MonoBehaviour {
         if (OVRInput.GetDown(OVRInput.RawButton.B) || Input.GetKeyDown(KeyCode.H))
         {
             pt.PreviousTexture();
-            //if (sb.isGrabbed())
-            //    laser.OnOff();
         }
 
         if (OVRInput.GetDown(OVRInput.RawButton.X))
@@ -89,29 +87,17 @@ public class KbHandControl : MonoBehaviour {
             h2c.ExportMode();
         }
 
-        if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
-        {
-            sb.makeActive();
-        }
-        else if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
-        {
-
-            sb.makeInactive();
-            //if (sb.isGrabbed())
-            //{
-            //    if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
-            //    {
-            //        laser.drawColor();
-            //        sb.setColor();
-            //        sb.startDrawing();
-            //    }
-            //    else if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
-            //    {
-            //        laser.turnOn();
-            //        sb.stopDrawing();
-            //    }
-            //}
-
+        // Laser pointer controls that only work if it is grabbed.
+        if (sb.isGrabbed()) {
+            if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
+            {
+                sb.makeActive();
+            }
+            if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
+            {
+                sb.makeInactive();
+                sb.setColor();  // Only changes color if we're pointed at one of the color palette objects
+            }
         }
     }
 }

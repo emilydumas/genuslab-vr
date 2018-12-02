@@ -176,14 +176,7 @@ public class StickBehavior : MonoBehaviour {
             transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
             if (isActive)
             {
-                if (drill)
-                {
-                    PaintAllHits();
-                }
-                else
-                {
-                    PaintWithInterpolation();
-                }
+                PaintWithInterpolation();
             }
 
             // checks if we were drawing in the previous scene
@@ -196,45 +189,6 @@ public class StickBehavior : MonoBehaviour {
 
     }
 
-    void PaintAllHits()
-    {
-        if (pt == null)
-            return;
-
-
-        Vector3 raydir = transform.TransformDirection(Vector3.up);
-        Vector3 pos = transform.position;
-        RaycastHit hit;
-
-        List<Vector3> hitList = new List<Vector3>();
-        GameObject gObject = null;
-
-        // Forward pass: record hits (ray enters surface) and paint them
-        while (Physics.Raycast(pos, raydir, out hit, maxDist, layerMask))
-        {
-            GameObject g = hit.transform.gameObject;
-            gObject = g;
-            pt.PaintUV(g, hit.textureCoord);
-            hitList.Add(hit.point);
-            pos = hit.point + 0.001f * raydir; // move slightly forward of latest hit
-        }
-
-        // Backward pass: Detect surface exits and paint them
-        if (hitList.Count != 0)
-        {
-            Vector3 backHitStart = hitList[hitList.Count - 1] + (maxForward * raydir);
-            hitList.Add(backHitStart);
-            hitList.Reverse();
-            for (int i = 0; i < hitList.Count; i++)
-            {
-                if (Physics.Raycast(hitList[i], (-1 * raydir), out hit, maxDist, layerMask))
-                {
-                    pt.PaintUV(gObject, hit.textureCoord);
-                }
-            }
-        }
-    }
-
     bool HaveLastPosition()
     {
         return !(float.IsNaN(lastPosition.x) || float.IsNaN(lastPosition.y) || float.IsNaN(lastPosition.z));
@@ -245,60 +199,83 @@ public class StickBehavior : MonoBehaviour {
         //threshold for where linear interpolation doesn't affect performance.
         //Still see some spotting if drawing on edges of the H2View
         float maxStep = 0.2f;
+        Vector3 curDirection = transform.TransformDirection(Vector3.up);
 
-        if (HaveLastPosition())
-        {
-            Vector3 curDirection = transform.TransformDirection(Vector3.up);
-
+        if (HaveLastPosition()) {
             float spaceDist = Vector3.Distance(lastPosition, transform.position);
             float angleDist = Vector3.Angle(lastDirection, curDirection);
 
             float numSteps = Mathf.Ceil((spaceDist + angleDist) / maxStep);
 
-            for (int j = 1; j <= numSteps; j++)
-            {
+            for (int j = 1; j <= numSteps; j++) {
                 var pos = Vector3.Lerp(lastPosition, transform.position, (float)j / (float)numSteps);
                 var dir = Vector3.Slerp(lastDirection, curDirection, (float)j / (float)numSteps);
                 PaintRay(pos, dir);
             }
-        }
-        else
-        {
-            PaintFirstHit();
+        } else {
+            PaintRay(transform.position, curDirection);
         }
     }
 
-    void PaintRay(Vector3 pos, Vector3 dir)
+    void PaintRayAll(Vector3 pos, Vector3 dir)
     {
+        // Paint all places where this ray hits paintable objects
+        
+        RaycastHit hit;
+        List<Vector3> hitList = new List<Vector3>();
+        GameObject gObject = null;
+
+        // Forward pass: record hits (ray enters surface) and paint them
+        while (Physics.Raycast(pos, dir, out hit, maxDist, layerMask))
+        {
+            GameObject g = hit.transform.gameObject;
+            gObject = g;
+            pt.PaintUV(g, hit.textureCoord);
+            hitList.Add(hit.point);
+            pos = hit.point + 0.001f * dir; // move slightly forward of latest hit
+        }
+
+        // Backward pass: Detect surface exits and paint them
+        if (hitList.Count != 0)
+        {
+            Vector3 backHitStart = hitList[hitList.Count - 1] + (maxForward * dir);
+            hitList.Add(backHitStart);
+            hitList.Reverse();
+            for (int i = 0; i < hitList.Count; i++)
+            {
+                if (Physics.Raycast(hitList[i], (-1 * dir), out hit, maxDist, layerMask))
+                {
+                    pt.PaintUV(gObject, hit.textureCoord);
+                }
+            }
+        }
+    }
+
+    void PaintRayFirst(Vector3 pos, Vector3 dir)
+    {
+        // Paint only the first place where this ray touches a paintable object
         RaycastHit hit;
 
         // Cast a ray in direction "up", determine what paintable is first hit.
         if (Physics.Raycast(pos, dir, out hit, maxDist, layerMask))
         {
-
             GameObject g = hit.transform.gameObject;
-
-            if (pt != null)
-            {
-                // Paint on the shared PaintableTexture at the (u,v) coordinates
-                // of the point where the ray met the object.
-                pt.PaintUV(g, hit.textureCoord);
-            }
+            pt.PaintUV(g, hit.textureCoord);
         }
     }
 
 
 
-    void PaintFirstHit() {
-
-        var raydir = transform.TransformDirection(Vector3.up);
-        PaintRay(transform.position, raydir);
-
+    void PaintRay(Vector3 pos, Vector3 dir) {
+        if (drill) {
+            PaintRayAll(pos,dir);
+        } else {
+            PaintRayFirst(pos,dir);
+        }
     }
 
     public void setColor()
     {
-        Debug.Log("SetColor called");
         RaycastHit hit;
         var raydir = transform.TransformDirection(Vector3.up);
         if (Physics.Raycast(transform.position, raydir, out hit, maxDist, colorMask))

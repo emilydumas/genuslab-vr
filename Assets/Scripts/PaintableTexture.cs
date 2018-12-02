@@ -147,7 +147,7 @@ public class PaintableTexture : MonoBehaviour {
 	}
 
     public void SetTexture(int idx) {
-        Debug.Log("Setting to" + idx);
+        Debug.Log("Setting PaintableTexture to use texture #" + idx);
         currentTextureOption = idx;
         Clear();
     }

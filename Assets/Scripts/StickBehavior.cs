@@ -16,6 +16,8 @@ public class StickBehavior : MonoBehaviour {
 
     // Allows for ability to check if item has been grabbed.
     public OVRGrabbable gb;
+    public OVRGrabber rightHand;
+    public OVRGrabber leftHand;
     // Removes issues when throwing causes multiple 'fall-throughs' otherwise a new vector is created every drop
     private Vector3 respawn;
 
@@ -23,7 +25,8 @@ public class StickBehavior : MonoBehaviour {
     //public GameObject laserPointer;
     //private LaserOnOff laser;
 
-    public OVRInput.Controller Controller;
+    public OVRInput.Controller rightController;
+    public OVRInput.Controller leftController;
 	public float maxDist = Mathf.Infinity;
 	public Material inactiveBeamMaterial;
 	public Material activeBeamMaterial;
@@ -37,6 +40,8 @@ public class StickBehavior : MonoBehaviour {
 	private LayerMask layerMask = Physics.DefaultRaycastLayers;
     private LayerMask colorMask = Physics.DefaultRaycastLayers;
     private LayerMask textureColorMask = Physics.DefaultRaycastLayers;
+    private LayerMask drillMask = Physics.DefaultRaycastLayers;
+    private LayerMask invisibleMask = Physics.DefaultRaycastLayers;
     private float maxForward = 10.0f;
 
     // For interpolated drawing
@@ -55,6 +60,10 @@ public class StickBehavior : MonoBehaviour {
         colorMask = (1 << LayerMask.NameToLayer("Color"));
         // textureColorMask is for getting a color from a texture
         textureColorMask = (1 << LayerMask.NameToLayer("TextureColor"));
+        // invisibleMask is to set the alpha to 0 for a transparent collor
+        invisibleMask = (1 << LayerMask.NameToLayer("Transparent"));       
+        // drillMask is to toggle the drill bool
+        drillMask = (1 << LayerMask.NameToLayer("Drill"));
         if (maxDist < maxForward)
 			maxForward = maxDist;
 		// Find the beam object.  It must have the "Beam" tag.
@@ -154,6 +163,14 @@ public class StickBehavior : MonoBehaviour {
         body.isKinematic = false;
        // laser.turnOff();
     }
+    
+    public string whichGrabbed()
+    {
+        if (gb.grabbedBy == rightHand)
+            return "right";
+        else
+            return "left";
+    }
 
 
     void Update()
@@ -172,11 +189,21 @@ public class StickBehavior : MonoBehaviour {
 
         if (isGrabbed())
         {
-            // DO NOT CHANGE 
-            // The way the laser pointer was made doesn't allow for the usual 'snap offset'
-            Vector3 handSnap = new Vector3(-0.58f, 0.96f, -7.76f);
-            transform.localPosition = OVRInput.GetLocalControllerPosition(Controller) + handSnap;
-            transform.localRotation = OVRInput.GetLocalControllerRotation(Controller) * Quaternion.Euler(90, 0, 0);
+            if (gb.grabbedBy == rightHand)
+            {
+                // DO NOT CHANGE 
+                // The way the laser pointer was made doesn't allow for the usual 'snap offset'
+                Vector3 rightHandSnap = new Vector3(-0.58f, 0.96f, -7.76f);
+                transform.localPosition = OVRInput.GetLocalControllerPosition(rightController) + rightHandSnap;
+                transform.localRotation = OVRInput.GetLocalControllerRotation(rightController) * Quaternion.Euler(90, 0, 0);
+            }
+            else
+            {
+                Vector3 leftHandSnap = new Vector3(-0.62f, 0.96f, -7.76f);
+                transform.localPosition = OVRInput.GetLocalControllerPosition(leftController) + leftHandSnap;
+                transform.localRotation = OVRInput.GetLocalControllerRotation(leftController) * Quaternion.Euler(90, 0, 0);
+            }
+
             if (isActive)
             {
                 PaintWithInterpolation();
@@ -220,10 +247,16 @@ public class StickBehavior : MonoBehaviour {
             for (int j = 1; j <= numSteps; j++) {
                 var pos = Vector3.Lerp(lastPosition, transform.position, (float)j / (float)numSteps);
                 var dir = Vector3.Slerp(lastDirection, curDirection, (float)j / (float)numSteps);
-                PaintRay(pos, dir);
+                if (drill)
+                    PaintRayAll(pos, dir);
+                else
+                    PaintRay(pos, dir);
             }
         } else {
-            PaintRay(transform.position, curDirection);
+            if (drill)
+                PaintRayAll(transform.position, curDirection);
+            else
+                PaintRay(transform.position, curDirection);
         }
     }
 
@@ -298,7 +331,7 @@ public class StickBehavior : MonoBehaviour {
             pt.SetDrawingColor(c);
 
         }
-        if (Physics.Raycast(transform.position, raydir, out hit, maxDist, textureColorMask))
+        else if (Physics.Raycast(transform.position, raydir, out hit, maxDist, textureColorMask))
         {
             // HAVE to use the texture as a 2D texture for better normalized (u,v) coordinate of texture
             Texture2D tex = hit.transform.GetComponent<MeshRenderer>().material.mainTexture as Texture2D;
@@ -311,7 +344,26 @@ public class StickBehavior : MonoBehaviour {
             Color c = tex.GetPixel((int)uvCoord.x, (int)uvCoord.y);
 
             pt.SetDrawingColor(c);
+        }
+        else if (Physics.Raycast(transform.position, raydir, out hit, maxDist, invisibleMask))
+        {
+            Color c = Color.clear;
 
+            pt.SetDrawingColor(c);
+        }
+        else if (Physics.Raycast(transform.position, raydir, out hit, maxDist, drillMask))
+        {
+            if (drill)
+            {
+                Debug.Log("Drillin");
+                drill = false;
+
+            }
+            else
+            {
+                Debug.Log("Stopped Drilling");
+                drill = true;
+            }
         }
 
     }

@@ -87,16 +87,41 @@ public class KbHandControl : MonoBehaviour {
             h2c.ExportMode();
         }
 
-        // Laser pointer controls that only work if it is grabbed.
+        // Laser pointer controls that only work if it is grabbed by the correct hand.
         if (sb.isGrabbed()) {
-            if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
+            if (sb.whichGrabbed() == "right")
             {
-                sb.makeActive();
+                if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
+                {
+                    sb.makeActive();    // This setup gave tighter, more responsive controls.
+                    sb.setColor();      // Toggling the drill and changing color were
+                                        // under-responsive when executing with GetUp()
+                }
+                else if (OVRInput.Get(OVRInput.RawButton.RIndexTrigger))
+                {
+                    sb.makeActive();
+                }
+                else
+                {
+                    sb.makeInactive();
+                }
             }
-            if (OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger))
+            else if (sb.whichGrabbed() == "left")       
             {
-                sb.makeInactive();
-                sb.setColor();  // Only changes color if we're pointed at one of the color palette objects
+                if (OVRInput.GetDown(OVRInput.RawButton.LIndexTrigger))
+                {
+                    sb.makeActive();
+                    sb.setColor();
+
+                }
+                else if (OVRInput.Get(OVRInput.RawButton.LIndexTrigger))
+                {
+                    sb.makeActive();
+                }
+                else
+                {
+                    sb.makeInactive();
+                }
             }
         }
     }

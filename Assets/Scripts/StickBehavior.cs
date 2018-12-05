@@ -30,6 +30,7 @@ public class StickBehavior : MonoBehaviour {
 	public float maxDist = Mathf.Infinity;
 	public Material inactiveBeamMaterial;
 	public Material activeBeamMaterial;
+    public Material drillBeamMaterial;
 	private Renderer[] rends;
 	private Renderer beamRenderer;
 	private Rigidbody beamRB;
@@ -81,26 +82,48 @@ public class StickBehavior : MonoBehaviour {
 		makeInactive();
 	}
 
+    private void updateMaterial()
+    {
+        if (beamRenderer != null) {
+            if (isActive) {
+                if (drill) {
+                    beamRenderer.material = drillBeamMaterial;
+                } else {
+                    beamRenderer.material = activeBeamMaterial;
+                }
+            }  else {
+                beamRenderer.material = inactiveBeamMaterial;
+            }
+        }
+    }
+
+    private void setCollisionDetection(bool s)
+    {
+        if (beamRB != null) {
+            beamRB.detectCollisions = s;
+            beamRB.WakeUp();
+        }
+    }
+
+    private void enableCollisions()
+    {
+        setCollisionDetection(true);
+    }
+
+    private void disableCollisions()
+    {
+        setCollisionDetection(false);
+    }
+
 	// Set whether the GameObject is currently active (drawing, pressing buttons, etc)
 	public void setActive(bool d)
 	{
 		isActive = d;
-		if (beamRenderer != null) {
-			if (d) {
-				beamRenderer.material = activeBeamMaterial;
-				if (beamRB != null) {
-					beamRB.detectCollisions = true;
-					beamRB.WakeUp();
-				}
-			} else {
-				beamRenderer.material = inactiveBeamMaterial;
-				if (beamRB != null) {
-					beamRB.detectCollisions = false;
-					beamRB.WakeUp();	
-				}
-			}
-		}
-        if (!d) {
+
+        updateMaterial();
+        setCollisionDetection(isActive);
+    	
+        if (!isActive) {
             lastPosition = new Vector3(float.NaN, float.NaN, float.NaN);
         }
 	}
@@ -115,11 +138,10 @@ public class StickBehavior : MonoBehaviour {
 		setActive(false);
 	}
 
-	// Set whether the GameObject is currently drilling through paintable
-	// objects.  NOT CURRENTLY IMPLEMENTED.
 	public void setDrill(bool d)
 	{
 		drill = d;
+        updateMaterial();
 	}
 
 	// Make GameObject and its children visible or invisible.

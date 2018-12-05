@@ -1852,6 +1852,7 @@ MonoBehaviour:
   inactiveBeamMaterial: {fileID: 2100000, guid: 5606dccaa681e2e4a9ee3c6c71d03e05,
     type: 2}
   activeBeamMaterial: {fileID: 2100000, guid: 48a54195d2d478f4f983eff75def7056, type: 2}
+  drillBeamMaterial: {fileID: 2100000, guid: 1e33cc4228b82b145b6ba38ec87389c0, type: 2}
 --- !u!4 &1766946993
 Transform:
   m_ObjectHideFlags: 0

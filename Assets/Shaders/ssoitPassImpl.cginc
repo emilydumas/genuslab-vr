@@ -15,6 +15,7 @@ struct v2f
     float4 screenpos : TEXCOORD1;
     float3 normal : TEXCOORD2;
 	float eyedepth : TEXCOORD3;
+    half4 diffuse : COLOR0;
 };
  
 v2f vert (appdata_base v)
@@ -25,6 +26,11 @@ v2f vert (appdata_base v)
     o.normal = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
     o.uv = v.texcoord;
     COMPUTE_EYEDEPTH(o.eyedepth);
+
+    // Lambert lighting model; based in part on:
+	// https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html
+    o.diffuse = 0.4 + 0.8*max(0, dot(normalize(o.normal), _WorldSpaceLightPos0.xyz));
+
     return o;
 }
  
@@ -47,5 +53,8 @@ fixed4 frag (v2f i) : COLOR {
 
     // Depths match.  Return the color from MainTex
     fixed4 col = tex2D(_MainTex,i.uv);
-    return col;
+
+    // Lambert lighting model; based in part on:
+	// https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html
+    return float4(col.rgb * i.diffuse,col.a);
 }

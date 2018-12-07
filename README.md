@@ -4,11 +4,11 @@
 
 A VR experience for Oculus Rift + Touch to explore drawing on a genus two surface and its universal cover, which updates both pictures in real time.  This is meant to be used to understand the universal covering of a hyperbolic surface.  Developed in [Unity 3D](http://unity3d.com/unity).
 
-## Status
+## Development Status
 
-Pre-alpha.  Basic features are still under development.
+Alpha.  Basic drawing (and erasing) features work, but the interface is rather spartan and there is no in-app help or documentation.
 
-This is a Fall 2018 project in the [Mathematical Computing Laboratory](http://mcl.math.uic.edu/) at UIC.
+This program was developed in a Fall 2018 project in the [Mathematical Computing Laboratory](http://mcl.math.uic.edu/) at UIC.
 
 ## Requirements
 
@@ -26,7 +26,7 @@ This is a Fall 2018 project in the [Mathematical Computing Laboratory](http://mc
 
 ## Developers
 
-* Alexander Adrahtas
+* Alexander Adrahtas (<aadrah2@uic.edu>)
 * David Dumas (<david@dumas.io>)
-* Alexander Guo
-* Gregory Schamberger
+* Alexander Guo (<alx168@gmail.com>)
+* Gregory Schamberger (<gscham2@uic.edu>)

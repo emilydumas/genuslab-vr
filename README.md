@@ -24,6 +24,12 @@ This program was developed in a Fall 2018 project in the [Mathematical Computing
 * Oculus Rift headset
 * Oculus Touch controllers
 
+## Image credits
+
+Image assets used in this application:
+
+* [Circle-redo](https://commons.wikimedia.org/wiki/File:Circle-redo.svg) by [Carelesshx](https://commons.wikimedia.org/wiki/User_talk:Carelesshx) is licensed under  [Creative Commons Attribution-Share Alike 3.0 Unported](https://creativecommons.org/licenses/by-sa/3.0/deed.en)
+
 ## Developers
 
 * Alexander Adrahtas (<aadrah2@uic.edu>)

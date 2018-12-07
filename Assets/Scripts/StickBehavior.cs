@@ -257,7 +257,7 @@ public class StickBehavior : MonoBehaviour {
     {
         //threshold for where linear interpolation doesn't affect performance.
         //Still see some spotting if drawing on edges of the H2View
-        float maxStep = 0.2f;
+        float maxStep = 0.25f;
         Vector3 curDirection = transform.TransformDirection(Vector3.up);
 
         if (HaveLastPosition()) {

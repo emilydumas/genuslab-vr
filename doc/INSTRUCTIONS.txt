@@ -1,0 +1,132 @@
+Instructions for using GenusLab VR 0.5
+--------------------------------------
+
+* Requirements
+
+You need an Oculus Rift headset and Oculus Touch hand controllers.
+
+
+* Purpose
+
+This program allows you to draw on a genus two surface and see the preimage of
+your drawing in the hyperbolic plane in real time.  It also allows drawing on
+the hyperbolic plane while showing the projection to the surface in real time.
+
+The purpose of this illustration is to teach the user about the universal
+covering of a surface, about hyperbolic geometry, and to allow the user to make
+drawings and figures the are useful in the study of surface topology.
+
+
+* Startup and general controls
+
+When you start the application, you will be standing in front of a small table.
+On the table are a LASER POINTER and a GENUS TWO SURFACE.
+
+In front of you, to the left, is a view of a hyperbolic tiling.  It is
+surrounded by buttons that perform various functions.  This is the H2 VIEW
+COMPLEX.
+
+In front of you, to the right, is a color chooser panel with a row of buttons
+below it.  This is the COLOR CHOOSER COMPLEX.
+
+The essential control conventions of this application are:
+
+  * To grab an object, reach for it and press the Hand Trigger on the Touch
+  controller.  This is the button located on the hand grip part of the
+  controller that usually rests under the second finger.  The grabbable objects are:
+    - The genus two surface
+    - The laser pointer
+
+  * To "activate" the laser pointer (while holding it), hold down the Index
+  Trigger on the touch controller.  Activating the laser pointer is used to:
+    - Draw on the genus two surface,
+    - Draw on the hyperbolic plane, or
+    - Press buttons
+
+The following additional keyboard controls can be used at any time:
+
+  * Control-Q will quit the application
+
+When the application starts, the drawing color is set to transparency.  Drawing
+a transparent spot is equivalent to erasing part of an object.  Thus, picking up
+the laser pointer and holding the index trigger will allow you to erase parts of
+the surface or of the hyperbolic plane.
+
+
+* Laser Pointer
+
+To do anything interesting, you will need to pick up the laser pointer from the
+table.  Either hand can be used, according to your preference.
+
+If the laser pointer is dropped, it will fall to the floor, disappear, and then
+reappear on the table again.  This feature ensures that the laser pointer cannot
+be lost.
+
+
+* Genus Two Surface
+
+The surface does not experience gravity.  The main action that can be performed
+using the surface is drawing, by pointing the laser at it and holding the index
+trigger.
+
+
+* H2 View Complex
+
+The large central area shows a tiling of the hyperbolic plane by regular
+quadrilaterals.  On the four sides of the tiling view are buttons with arrows,
+which (when activated) slide the hyperbolic plane in any of four directions.
+
+At the four corners of the H2 View Complex are buttons with other functions
+related to drawing:
+
+  * The upper-left button toggles between the Klein and Poincare models of
+  hyperbolic geometry.  The image shown on this button is a preview of what the
+  other model looks like. 
+  
+  * The upper-right button cycles between various background textures that can
+  be applied to the tiling and surface.  The image shown on this button is a
+  preview of the next texture.
+  
+  * The lower-left button (with a "go back" icon as its texture) erases all of
+  the user-created drawings on the surface.
+  
+  * The lower-right button (with a "center" icon as its texture) resets the
+  position of the hyperbolic plane to its default value.
+
+
+* Color Chooser Complex
+
+The upper panel shows a range of colors.  To select one as the drawing color,
+simply point the laser at the desired color and activate it (Index Trigger).
+
+The buttons below this panel have several functions:
+
+  * The five leftmost buttons allow the user to select shades of gray.
+
+  * The partially transparent button sets the drawing color to "transparency".
+
+  * The button with concentric circles toggles between the two laser modes:
+
+     - Paint mode, where the first place where the laser meets the surface or
+     tiling is drawn.  When paint mode is selected, the laser beam becomes PINK
+     when active.
+
+     - Drill mode, where every intersection point between the laser and the
+     surface or tiling is drawn.  Thus, drill mode can be used to simulate
+     slicing the surface in half (and similar effects).  When drill mode is
+     selected, the laser beam becomes GREEN when active.
+
+
+* Known Issues
+
+  * The hyperbolic plane can only slide a short distance before the view becomes
+  distorted and unusable.  If this happens, recenter the tiling using the button
+  on the lower right of the H2 view complex.
+
+  * The laser beam can still press buttons after passing through the surface. It
+  seems that this often causes behavior unexpected by new users, where e.g. the
+  tiling slides around or the drawing is cleared while the user attempts to draw
+  on the surface.  Since this happens when the surface is held directly in front
+  of the tiling, one workaround is to hold the surface off to the side (i.e. not
+  in front of the tiling) while drawing, and to look to the tiling only when
+  drawing is finished.

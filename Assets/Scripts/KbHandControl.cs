@@ -65,32 +65,20 @@ public class KbHandControl : MonoBehaviour {
             sb.makeVisible();
         }
 
-        if (OVRInput.GetDown(OVRInput.RawButton.A) || Input.GetKeyDown(KeyCode.Y))
+        if (Input.GetKeyDown(KeyCode.Y))
         {
             pt.NextTexture();
         }
 
-        if (OVRInput.GetDown(OVRInput.RawButton.B) || Input.GetKeyDown(KeyCode.H))
+        if (Input.GetKeyDown(KeyCode.H))
         {
             pt.PreviousTexture();
         }
 
-        if (OVRInput.GetDown(OVRInput.RawButton.X))
-        {
-            pt.Clear();
-        }
-
-        if (OVRInput.GetDown(OVRInput.RawButton.Y))
-        {
-            // Klein-Poincare toggle
-            h2c.ToggleModel();
-            h2c.ExportMode();
-        }
-
-        // Laser pointer controls that only work if it is grabbed by the correct hand.
         if (sb.isGrabbed()) {
             if (sb.whichGrabbed() == "right")
             {
+                // Laser pointer controls that only work if it is grabbed by the correct hand.
                 if (OVRInput.GetDown(OVRInput.RawButton.RIndexTrigger))
                 {
                     sb.makeActive();    // This setup gave tighter, more responsive controls.
@@ -106,7 +94,7 @@ public class KbHandControl : MonoBehaviour {
                     sb.makeInactive();
                 }
             }
-            else if (sb.whichGrabbed() == "left")       
+            else if (sb.whichGrabbed() == "left")
             {
                 if (OVRInput.GetDown(OVRInput.RawButton.LIndexTrigger))
                 {

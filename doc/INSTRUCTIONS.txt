@@ -130,3 +130,13 @@ The buttons below this panel have several functions:
   of the tiling, one workaround is to hold the surface off to the side (i.e. not
   in front of the tiling) while drawing, and to look to the tiling only when
   drawing is finished.
+
+
+* Developers
+
+GenusLab is developed by:
+
+  * Alexander Adrahtas (aadrah2@uic.edu)
+  * David Dumas (david@dumas.io)
+  * Alexander Guo (alx168@gmail.com)
+  * Gregory Schamberger (gscham2@uic.edu)
